@@ -4,15 +4,15 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Not started
+- Design System Setup
 
 ## Current Goal
 
-- Define the immediate implementation goal here.
+- Implement `01-design-system.md` specifications.
 
 ## Completed
 
-- None yet.
+- `01-design-system.md`: Installed and configured `shadcn/ui`, added base components, set up `lib/utils.ts`, and configured `globals.css` dark theme matching `ui-context.md`.
 
 ## In Progress
 
