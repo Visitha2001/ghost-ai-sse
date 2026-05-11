@@ -1,12 +1,13 @@
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 
 export default function Page() {
   return (
-    <div className="p-8 bg-base text-copy-primary min-h-screen">
-      <h1>ghsot ui</h1>
+    <div className="p-8 flex flex-col items-center justify-center min-h-screen gap-4">
+      <h1 className="text-2xl font-bold">Ghost AI</h1>
+      <Link href="/editor">
+        <Button>Open Editor</Button>
+      </Link>
     </div>
   )
 }
