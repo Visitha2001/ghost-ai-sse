@@ -4,15 +4,16 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Design System Setup
+- Editor Components
 
 ## Current Goal
 
-- Implement `01-design-system.md` specifications.
+- Implement `02-editor-navbar.md` specifications.
 
 ## Completed
 
 - `01-design-system.md`: Installed and configured `shadcn/ui`, added base components, set up `lib/utils.ts`, and configured `globals.css` dark theme matching `ui-context.md`.
+- `02-editor-navbar.md`: Created Editor Navbar and Project Sidebar, verified Dialog pattern readiness.
 
 ## In Progress
 
@@ -20,7 +21,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Next Up
 
-- Add the next planned feature unit here.
+- `03-canvas-board.md` (or next planned feature).
 
 ## Open Questions
 
