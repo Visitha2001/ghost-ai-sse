@@ -2,6 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Clerk Skills install
+```bash
+    npm run skills add clerk/skills 
+```
+
+    then select the following options:
+    - clerk
+    - clerk-backend-api
+    - clerk-custom-ui
+    - clerk-setup
+    - clerk-nextjs-patterns
+
+
 First, run the development server:
 
 ```bash

@@ -1,13 +1,12 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 
-export default function Page() {
-  return (
-    <div className="p-8 flex flex-col items-center justify-center min-h-screen gap-4">
-      <h1 className="text-2xl font-bold">Ghost AI</h1>
-      <Link href="/editor">
-        <Button>Open Editor</Button>
-      </Link>
-    </div>
-  )
+export default async function Page() {
+  const { userId } = await auth();
+
+  if (userId) {
+    redirect("/editor");
+  }
+
+  redirect("/sign-in");
 }
