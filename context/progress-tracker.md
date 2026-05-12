@@ -4,11 +4,11 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-- Editor Components
+- Authentication
 
 ## Current Goal
 
-- Implement `02-editor-navbar.md` specifications.
+- Implement `03-auth.md` specifications.
 
 ## Completed
 
@@ -17,11 +17,11 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## In Progress
 
-- None yet.
+- `03-auth.md`: Wiring up Clerk provider, auth pages, redirects, route protection, and user menu.
 
 ## Next Up
 
-- `03-canvas-board.md` (or next planned feature).
+- `04-canvas-board.md` (or next planned feature).
 
 ## Open Questions
 
