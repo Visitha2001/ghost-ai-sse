@@ -90,7 +90,7 @@
   --popover: var(--bg-elevated);
   --popover-foreground: var(--text-primary);
   
-  --primary: var(--text-primary);
+  --primary: var(--accent-primary);
   --primary-foreground: var(--bg-base);
   
   --secondary: var(--bg-subtle);
