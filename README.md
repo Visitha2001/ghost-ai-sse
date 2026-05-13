@@ -14,6 +14,12 @@ Clerk Skills install
     - clerk-setup
     - clerk-nextjs-patterns
 
+Agentic dev implementation flow:
+
+1. read context/feature-specs to know what to build next
+2. read progresstracker.md to know the current phase
+3. update progresstracker.md after each phase implementation
+4. then implement new features.  
 
 First, run the development server:
 
