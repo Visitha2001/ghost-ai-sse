@@ -36,6 +36,15 @@ export function ProjectDialogs() {
     setFormName,
   } = useProjectDialogs()
 
+  const slugError = React.useMemo(() => {
+    if (!formName) return null
+    if (formName.length < 3) return "Project name must be at least 3 characters."
+    if (formName.length > 48) return "Project name must be less than 48 characters."
+    if (!/^[a-z0-9-]+$/.test(formName)) return "Project name can only contain lowercase letters, numbers, and hyphens."
+    if (formName.startsWith("-") || formName.endsWith("-")) return "Project name cannot start or end with a hyphen."
+    return null
+  }, [formName])
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       closeDialog()
@@ -70,12 +79,15 @@ export function ProjectDialogs() {
                 <Label htmlFor="create-name">Project Name</Label>
                 <Input
                   id="create-name"
-                  placeholder="e.g. My Next.js App"
+                  placeholder="e.g. my-nextjs-app"
                   value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
+                  onChange={(e) => setFormName(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
                   autoFocus
                   required
                 />
+                {slugError && (
+                  <p className="text-sm text-destructive">{slugError}</p>
+                )}
               </div>
               <div className="grid gap-2 text-sm text-muted-foreground">
                 <p>Live URL preview:</p>
@@ -88,7 +100,7 @@ export function ProjectDialogs() {
               <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading || !formName.trim()}>
+              <Button type="submit" disabled={loading || !formName.trim() || !!slugError}>
                 {loading ? "Creating..." : "Create"}
               </Button>
             </DialogFooter>
@@ -110,19 +122,22 @@ export function ProjectDialogs() {
                 <Label htmlFor="rename-name">New Project Name</Label>
                 <Input
                   id="rename-name"
-                  placeholder="Project name"
+                  placeholder="project-name"
                   value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
+                  onChange={(e) => setFormName(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
                   autoFocus
                   required
                 />
+                {slugError && (
+                  <p className="text-sm text-destructive">{slugError}</p>
+                )}
               </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={closeDialog} disabled={loading}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading || !formName.trim()}>
+              <Button type="submit" disabled={loading || !formName.trim() || !!slugError}>
                 {loading ? "Saving..." : "Save"}
               </Button>
             </DialogFooter>

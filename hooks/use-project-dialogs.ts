@@ -31,7 +31,7 @@ export const useProjectDialogs = create<ProjectDialogsState>((set) => ({
       type, 
       isOpen: true, 
       project, 
-      formName: project?.name || "", 
+      formName: project?.name ? project.name.toLowerCase().replace(/\s+/g, "-") : "", 
       loading: false 
     }),
   closeDialog: () => 
