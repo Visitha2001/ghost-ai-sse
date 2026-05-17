@@ -2,24 +2,40 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-Clerk Skills install
+### Clerk Skills install
 ```bash
     npm run skills add clerk/skills 
 ```
 
-    then select the following options:
-    - clerk
-    - clerk-backend-api
-    - clerk-custom-ui
-    - clerk-setup
-    - clerk-nextjs-patterns
+then select the following options:
+- clerk
+- clerk-backend-api
+- clerk-custom-ui
+- clerk-setup
+- clerk-nextjs-patterns
 
-Agentic dev implementation flow:
+### Agentic dev implementation flow:
 
 1. read context/feature-specs to know what to build next
 2. read progresstracker.md to know the current phase
 3. update progresstracker.md after each phase implementation
 4. then implement new features.  
+
+### Prisma setup: 
+```bash
+npm install prisma tsx @types/pg --save-dev
+npm install @prisma/client @prisma/adapter-pg pg dotenv
+npx prisma init --output ../app/generated/prisma
+```
+
+install prisma skills
+```bash
+npx skills add prisma/skills
+```
+
+select all options and confirm with "y" or by pressing enter key.
+- use project
+- use symlink (Recommended)
 
 First, run the development server:
 
