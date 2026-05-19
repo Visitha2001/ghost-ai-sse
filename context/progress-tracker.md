@@ -16,14 +16,14 @@ Update this file whenever the current phase, active feature, or implementation s
 - `02-editor-navbar.md`: Created Editor Navbar and Project Sidebar, verified Dialog pattern readiness.
 - `03-auth.md`: Wiring up Clerk provider, auth pages, redirects, route protection, and user menu.
 - `04-project-dialogs.md`: Building the editor home screen and project dialogs/sidebar actions.
+- `05-prisma.md`: Adding data models, Prisma client singleton, and first migration.
+
+- `06-project-apis.md`: Setting up internal API endpoints for projects.
+- `07-wire-editor-home.md`: Wire the editor home sidebar and dialogs to the real project API.
 
 ## In Progress
 
-- `05-prisma.md`: Adding data models, Prisma client singleton, and first migration.
-
 ## Next Up
-
-- `06-api-routes.md`: Setting up internal API endpoints.
 
 ## Open Questions
 

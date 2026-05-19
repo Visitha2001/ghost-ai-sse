@@ -9,7 +9,7 @@ const prismaClientSingleton = () => {
   if (connectionString.startsWith('prisma+postgres://') || connectionString.startsWith('prisma://')) {
     return new PrismaClient({
       accelerateUrl: connectionString,
-    }).$extends(withAccelerate());
+    }).$extends(withAccelerate()) as unknown as PrismaClient;
   }
 
   const { Pool } = pg;

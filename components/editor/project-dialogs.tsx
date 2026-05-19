@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useProjectDialogs } from "@/hooks/use-project-dialogs"
+import { useProjectActions } from "@/hooks/use-project-actions"
 
 function slugify(text: string) {
   return text
@@ -45,6 +46,8 @@ export function ProjectDialogs() {
     return null
   }, [formName])
 
+  const { createProject, renameProject, deleteProject } = useProjectActions()
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       closeDialog()
@@ -53,12 +56,11 @@ export function ProjectDialogs() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    // Mock save
-    setTimeout(() => {
-      setLoading(false)
-      closeDialog()
-    }, 500)
+    if (type === "create") {
+      createProject()
+    } else if (type === "rename") {
+      renameProject()
+    }
   }
 
   const slug = slugify(formName)
@@ -161,13 +163,7 @@ export function ProjectDialogs() {
               type="button" 
               variant="destructive" 
               disabled={loading}
-              onClick={() => {
-                setLoading(true)
-                setTimeout(() => {
-                  setLoading(false)
-                  closeDialog()
-                }, 500)
-              }}
+              onClick={deleteProject}
             >
               {loading ? "Deleting..." : "Delete"}
             </Button>
