@@ -18,9 +18,10 @@ Update this file whenever the current phase, active feature, or implementation s
 - `04-project-dialogs.md`: Building the editor home screen and project dialogs/sidebar actions.
 - `05-prisma.md`: Adding data models, Prisma client singleton, and first migration.
 
-## In Progress
-
 - `06-project-apis.md`: Setting up internal API endpoints for projects.
+- `07-wire-editor-home.md`: Wire the editor home sidebar and dialogs to the real project API.
+
+## In Progress
 
 ## Next Up
 

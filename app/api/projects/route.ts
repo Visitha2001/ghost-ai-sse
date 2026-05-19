@@ -35,10 +35,14 @@ export async function POST(req: Request) {
 
   try {
     let name = 'Untitled Project';
+    let id: string | undefined;
     try {
       const body = await req.json();
       if (body.name) {
         name = body.name;
+      }
+      if (body.id) {
+        id = body.id;
       }
     } catch (e) {
       // Ignore JSON parse errors
@@ -46,6 +50,7 @@ export async function POST(req: Request) {
 
     const project = await prisma.project.create({
       data: {
+        ...(id ? { id } : {}),
         name,
         ownerId: userId,
       },

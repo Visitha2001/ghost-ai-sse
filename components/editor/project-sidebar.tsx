@@ -13,21 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const MOCK_PROJECTS: Project[] = [
-  { id: "1", name: "My Next.js App", isOwned: true },
-  { id: "2", name: "Portfolio Website", isOwned: true },
-]
-
-const MOCK_SHARED_PROJECTS: Project[] = [
-  { id: "3", name: "Client Dashboard", isOwned: false },
-]
-
 interface ProjectSidebarProps {
   isOpen: boolean
   onClose: () => void
+  ownedProjects: Project[]
+  sharedProjects: Project[]
 }
 
-export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
+export function ProjectSidebar({ isOpen, onClose, ownedProjects, sharedProjects }: ProjectSidebarProps) {
   const { openDialog } = useProjectDialogs()
 
   React.useEffect(() => {
@@ -95,8 +88,8 @@ export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
             </div>
             
             <TabsContent value="my-projects" className="flex-1 overflow-auto p-4 flex flex-col gap-1">
-              {MOCK_PROJECTS.length > 0 ? (
-                MOCK_PROJECTS.map(renderProjectItem)
+              {ownedProjects.length > 0 ? (
+                ownedProjects.map(renderProjectItem)
               ) : (
                 <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
                   No projects yet.
@@ -105,8 +98,8 @@ export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
             </TabsContent>
             
             <TabsContent value="shared" className="flex-1 overflow-auto p-4 flex flex-col gap-1">
-              {MOCK_SHARED_PROJECTS.length > 0 ? (
-                MOCK_SHARED_PROJECTS.map(renderProjectItem)
+              {sharedProjects.length > 0 ? (
+                sharedProjects.map(renderProjectItem)
               ) : (
                 <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
                   No shared projects.
