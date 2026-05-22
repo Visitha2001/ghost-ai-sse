@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useProjectDialogs } from "@/hooks/use-project-dialogs"
 import { useProjectActions } from "@/hooks/use-project-actions"
+import { formatProjectName } from "@/lib/utils"
+import { ShareDialog } from "./share-dialog"
 
 function slugify(text: string) {
   return text
@@ -116,7 +118,7 @@ export function ProjectDialogs() {
             <DialogHeader>
               <DialogTitle>Rename Project</DialogTitle>
               <DialogDescription>
-                Currently renaming &quot;{project?.name}&quot;.
+                Currently renaming &quot;{project ? formatProjectName(project.name) : ""}&quot;.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -152,7 +154,7 @@ export function ProjectDialogs() {
           <DialogHeader>
             <DialogTitle>Delete Project</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete &quot;{project?.name}&quot;? This action cannot be undone.
+              Are you sure you want to delete &quot;{project ? formatProjectName(project.name) : ""}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
@@ -170,6 +172,8 @@ export function ProjectDialogs() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ShareDialog />
     </>
   )
 }
