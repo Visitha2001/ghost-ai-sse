@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { UserButton } from "@clerk/nextjs"
 import { cn, formatProjectName } from "@/lib/utils"
 import Link from "next/link"
+import { useParams } from "next/navigation"
+import { useProjectDialogs } from "@/hooks/use-project-dialogs"
 
 interface EditorNavbarProps {
   isSidebarOpen: boolean
@@ -22,6 +24,17 @@ export function EditorNavbar({
   onToggleAiSidebar,
   showActions = false,
 }: EditorNavbarProps) {
+  const params = useParams()
+  const roomId = params?.roomId as string | undefined
+  const openDialog = useProjectDialogs((state) => state.openDialog)
+  const storeOwned = useProjectDialogs((state) => state.ownedProjects)
+  const storeShared = useProjectDialogs((state) => state.sharedProjects)
+
+  const activeProject = React.useMemo(() => {
+    if (!roomId) return undefined
+    return [...storeOwned, ...storeShared].find((p) => p.id === roomId)
+  }, [roomId, storeOwned, storeShared])
+
   return (
     <header className="fixed top-0 left-0 right-0 h-14 bg-background border-b border-border z-40 flex items-center justify-between px-4">
       {/* Left side actions and breadcrumbs */}
@@ -66,6 +79,7 @@ export function EditorNavbar({
             <Button
               variant="outline"
               size="sm"
+              onClick={() => activeProject && openDialog("share", activeProject)}
               className="rounded-xl h-9 px-3 gap-2 border-border/80 text-muted-foreground hover:text-foreground text-xs font-medium"
             >
               <Share2 className="h-4 w-4" />

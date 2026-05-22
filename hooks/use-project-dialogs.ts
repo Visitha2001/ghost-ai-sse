@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-export type DialogType = "create" | "rename" | "delete" | null
+export type DialogType = "create" | "rename" | "delete" | "share" | null
 
 export interface Project {
   id: string

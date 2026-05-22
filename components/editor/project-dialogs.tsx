@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label"
 import { useProjectDialogs } from "@/hooks/use-project-dialogs"
 import { useProjectActions } from "@/hooks/use-project-actions"
 import { formatProjectName } from "@/lib/utils"
+import { ShareDialog } from "./share-dialog"
 
 function slugify(text: string) {
   return text
@@ -171,6 +172,8 @@ export function ProjectDialogs() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ShareDialog />
     </>
   )
 }
