@@ -62,12 +62,12 @@
 
 :root {
   /* Ghost AI Design System */
-  --bg-base: #080809;
-  --bg-surface: #111114;
-  --bg-elevated: #18181c;
-  --bg-subtle: #1e1e23;
-  --border-default: #2a2a30;
-  --border-subtle: #3a3a42;
+  --bg-base: #121214;
+  --bg-surface: #1a1a1f;
+  --bg-elevated: #222228;
+  --bg-subtle: #2b2b33;
+  --border-default: #34343d;
+  --border-subtle: #454552;
   --text-primary: #f0f0f4;
   --text-secondary: #c0c0cc;
   --text-muted: #808090;

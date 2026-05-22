@@ -14,10 +14,13 @@ interface ProjectDialogsState {
   project: Project | null
   loading: boolean
   formName: string
+  ownedProjects: Project[]
+  sharedProjects: Project[]
   openDialog: (type: DialogType, project?: Project | null) => void
   closeDialog: () => void
   setLoading: (loading: boolean) => void
   setFormName: (name: string) => void
+  setProjects: (owned: Project[], shared: Project[]) => void
 }
 
 export const useProjectDialogs = create<ProjectDialogsState>((set) => ({
@@ -26,6 +29,8 @@ export const useProjectDialogs = create<ProjectDialogsState>((set) => ({
   project: null,
   loading: false,
   formName: "",
+  ownedProjects: [],
+  sharedProjects: [],
   openDialog: (type, project = null) => 
     set({ 
       type, 
@@ -44,4 +49,5 @@ export const useProjectDialogs = create<ProjectDialogsState>((set) => ({
     }),
   setLoading: (loading) => set({ loading }),
   setFormName: (formName) => set({ formName }),
+  setProjects: (ownedProjects, sharedProjects) => set({ ownedProjects, sharedProjects }),
 }))

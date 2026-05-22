@@ -1,9 +1,17 @@
 import { useRouter } from "next/navigation"
-import { useProjectDialogs } from "./use-project-dialogs"
+import { useProjectDialogs, Project } from "./use-project-dialogs"
 
 export function useProjectActions() {
   const router = useRouter()
-  const { project, formName, setLoading, closeDialog } = useProjectDialogs()
+  const { 
+    project, 
+    formName, 
+    setLoading, 
+    closeDialog, 
+    ownedProjects, 
+    sharedProjects, 
+    setProjects 
+  } = useProjectDialogs()
 
   const createProject = async () => {
     setLoading(true)
@@ -20,8 +28,15 @@ export function useProjectActions() {
       
       const data = await res.json()
       
+      // Optimistically update the client state immediately for instantaneous UI reaction
+      const newProj: Project = { id: data.id, name: data.name, isOwned: true }
+      setProjects([newProj, ...ownedProjects], sharedProjects)
+      
       router.push(`/editor/${data.id}`)
       closeDialog()
+      
+      // Update Next.js server components in the background
+      router.refresh()
     } catch (error) {
       console.error(error)
     } finally {
@@ -38,6 +53,13 @@ export function useProjectActions() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: formName }),
       })
+      
+      // Optimistically update the project name in local state immediately
+      const updatedOwned = ownedProjects.map((p) => 
+        p.id === project.id ? { ...p, name: formName } : p
+      )
+      setProjects(updatedOwned, sharedProjects)
+      
       router.refresh()
       closeDialog()
     } catch (error) {
@@ -54,6 +76,10 @@ export function useProjectActions() {
       await fetch(`/api/projects/${project.id}`, {
         method: "DELETE",
       })
+      
+      // Optimistically remove the deleted project from local state immediately
+      const filteredOwned = ownedProjects.filter((p) => p.id !== project.id)
+      setProjects(filteredOwned, sharedProjects)
       
       if (typeof window !== "undefined" && window.location.pathname === `/editor/${project.id}`) {
         router.push("/editor")
