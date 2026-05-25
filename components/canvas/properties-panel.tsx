@@ -1,5 +1,5 @@
 import { useNodes, useEdges, useReactFlow } from '@xyflow/react'
-import { Trash2, RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight } from 'lucide-react'
+import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight } from 'lucide-react'
 import { canvasNode, canvasEdge } from '@/types/canvas'
 
 const COLORS = [
@@ -13,7 +13,15 @@ const COLORS = [
   { name: 'pink', value: '#ec4899' },
 ]
 
-export function PropertiesPanel() {
+import { type NodeChange, type EdgeChange } from '@xyflow/react'
+
+export function PropertiesPanel({
+  onNodesChange,
+  onEdgesChange
+}: {
+  onNodesChange?: (changes: NodeChange<canvasNode>[]) => void
+  onEdgesChange?: (changes: EdgeChange<canvasEdge>[]) => void
+}) {
   const { updateNodeData, updateEdgeData, deleteElements } = useReactFlow()
   const nodes = useNodes<canvasNode>()
   const edges = useEdges<canvasEdge>()
@@ -44,13 +52,7 @@ export function PropertiesPanel() {
         >
           <RotateCw className="w-5 h-5" />
         </button>
-        <button
-          onClick={() => deleteElements({ nodes: [{ id: node.id }] })}
-          className="p-2 hover:bg-destructive/10 rounded-full text-muted-foreground hover:text-destructive transition-colors ml-1"
-          title="Delete Shape"
-        >
-          <Trash2 className="w-5 h-5" />
-        </button>
+
       </div>
     )
   }
@@ -90,21 +92,12 @@ export function PropertiesPanel() {
         </div>
 
         {/* Arrow Config */}
-        <div className="flex items-center gap-1 pr-2 border-r mr-1 text-foreground">
+        <div className="flex items-center gap-1 mr-1 text-foreground">
           <button onClick={() => updateEdgeData(edge.id, { arrow: 'none' })} className={`p-2 rounded-full hover:bg-muted ${arrowConfig === 'none' ? 'bg-brand/20 text-brand' : ''}`} title="No Arrow"><Minus className="w-5 h-5" /></button>
           <button onClick={() => updateEdgeData(edge.id, { arrow: 'forward' })} className={`p-2 rounded-full hover:bg-muted ${arrowConfig === 'forward' ? 'bg-brand/20 text-brand' : ''}`} title="Forward Arrow"><ArrowRight className="w-5 h-5" /></button>
           <button onClick={() => updateEdgeData(edge.id, { arrow: 'backward' })} className={`p-2 rounded-full hover:bg-muted ${arrowConfig === 'backward' ? 'bg-brand/20 text-brand' : ''}`} title="Backward Arrow"><ArrowLeft className="w-5 h-5" /></button>
           <button onClick={() => updateEdgeData(edge.id, { arrow: 'both' })} className={`p-2 rounded-full hover:bg-muted ${arrowConfig === 'both' ? 'bg-brand/20 text-brand' : ''}`} title="Both Arrows"><ArrowLeftRight className="w-5 h-5" /></button>
         </div>
-
-        {/* Delete */}
-        <button
-          onClick={() => deleteElements({ edges: [{ id: edge.id }] })}
-          className="p-2 hover:bg-destructive/10 rounded-full text-muted-foreground hover:text-destructive transition-colors ml-1"
-          title="Delete Edge"
-        >
-          <Trash2 className="w-5 h-5" />
-        </button>
       </div>
     )
   }

@@ -8,6 +8,8 @@ import { useUndo, useRedo } from '@liveblocks/react/suspense'
 import { canvasNode, canvasEdge } from '@/types/canvas'
 import { CanvasNode } from './canvas-node'
 import { CustomEdge } from './custom-edge'
+import { ShapePanel } from './shape-panel'
+import { PropertiesPanel } from './properties-panel'
 import { useEffect } from 'react'
 
 const nodeTypes = {
@@ -106,6 +108,13 @@ export function CanvasFlow() {
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />
         <MiniMap />
       </ReactFlow>
+
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300 pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-4">
+          <ShapePanel />
+          <PropertiesPanel onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} />
+        </div>
+      </div>
     </div>
   )
 }

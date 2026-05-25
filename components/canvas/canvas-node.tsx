@@ -120,10 +120,18 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
         </div>
       </div>
 
-      <Handle type="target" position={Position.Top} id="top" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
-      <Handle type="source" position={Position.Bottom} id="bottom" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
-      <Handle type="source" position={Position.Right} id="right" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
-      <Handle type="target" position={Position.Left} id="left" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      <Handle type="target" position={Position.Top} id="top" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      </Handle>
+      <Handle type="source" position={Position.Bottom} id="bottom" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      </Handle>
+      <Handle type="source" position={Position.Right} id="right" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      </Handle>
+      <Handle type="target" position={Position.Left} id="left" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      </Handle>
     </>
   )
 }
