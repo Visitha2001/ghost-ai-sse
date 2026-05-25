@@ -59,7 +59,7 @@ export async function GET(
     }
 
     // Enrich Collaborator Details from Clerk
-    let enrichedCollaborators: any[] = [];
+    let enrichedCollaborators: { id: string, email: string, name: string | null, imageUrl: string | null, isOwner: boolean, createdAt: Date }[] = [];
     if (collaborators.length > 0) {
       try {
         const emails = collaborators.map((c) => c.email);
@@ -164,9 +164,10 @@ export async function POST(
       });
 
       return NextResponse.json(collaborator);
-    } catch (dbError: any) {
+    } catch (dbError: unknown) {
+      const e = dbError as { code?: string };
       // Handle Unique Constraint Violation (P2002)
-      if (dbError.code === 'P2002') {
+      if (e.code === 'P2002') {
         return new NextResponse('Collaborator already exists', { status: 409 });
       }
       throw dbError;

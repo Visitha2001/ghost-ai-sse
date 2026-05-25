@@ -35,7 +35,6 @@ export function ProjectDialogs() {
     loading,
     formName,
     closeDialog,
-    setLoading,
     setFormName,
   } = useProjectDialogs()
 

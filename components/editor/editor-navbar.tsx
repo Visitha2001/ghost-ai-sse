@@ -1,6 +1,6 @@
 import * as React from "react"
 import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { UserButton } from "@clerk/nextjs"
 import { cn, formatProjectName } from "@/lib/utils"
 import Link from "next/link"
@@ -52,15 +52,12 @@ export function EditorNavbar({
             <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
           )}
         </Button>
-        <Link href="/editor" passHref legacyBehavior>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Go to home"
-            className="h-9 w-9 rounded-xl hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-          >
-            <Home className="h-5 w-5" />
-          </Button>
+        <Link
+          href="/editor"
+          aria-label="Go to home"
+          className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-9 w-9 rounded-xl hover:bg-muted/50 text-muted-foreground hover:text-foreground")}
+        >
+          <Home className="h-5 w-5" />
         </Link>
         {projectName && (
           <>
