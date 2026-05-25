@@ -11,7 +11,7 @@ export type CanvasEdgeData = {
   color?: string
   thickness?: number
   style?: 'solid' | 'dashed' | 'dotted'
-  arrow?: boolean
+  arrow?: 'none' | 'forward' | 'backward' | 'both'
 }
 
 export type canvasNode = Node<CanvasNodeData>

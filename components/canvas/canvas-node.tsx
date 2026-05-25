@@ -1,10 +1,9 @@
-import { Handle, Position, NodeProps, NodeResizer, NodeToolbar, useReactFlow } from '@xyflow/react'
+import { Handle, Position, NodeProps, NodeResizer, useReactFlow } from '@xyflow/react'
 import { canvasNode } from '@/types/canvas'
-import { Trash2, RotateCw } from 'lucide-react'
+
 import { useCallback, useState } from 'react'
 
 const COLORS = [
-  { name: 'default', value: 'hsl(var(--brand))' },
   { name: 'slate', value: '#64748b' },
   { name: 'red', value: '#ef4444' },
   { name: 'orange', value: '#f97316' },
@@ -63,22 +62,9 @@ function ShapeRenderer({ shape, color }: { shape: string, color: string }) {
 }
 
 export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
-  const { deleteElements, updateNodeData } = useReactFlow()
+  const { updateNodeData } = useReactFlow()
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(data.label || '')
-
-  const onDelete = useCallback(() => {
-    deleteElements({ nodes: [{ id }] })
-  }, [id, deleteElements])
-
-  const onRotate = useCallback(() => {
-    const currentRot = data.rotation || 0
-    updateNodeData(id, { rotation: (currentRot + 90) % 360 })
-  }, [id, data.rotation, updateNodeData])
-
-  const onColorChange = useCallback((colorName: string) => {
-    updateNodeData(id, { color: colorName })
-  }, [id, updateNodeData])
 
   const handleDoubleClick = useCallback(() => {
     setIsEditing(true)
@@ -104,38 +90,6 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
         minHeight={40} 
         handleStyle={{ width: 12, height: 12, borderRadius: 2 }}
       />
-      
-      <NodeToolbar 
-        isVisible={selected && !isEditing} 
-        position={Position.Top} 
-        className="flex items-center gap-1 bg-card/95 backdrop-blur-md p-1.5 rounded-lg border shadow-xl mb-2"
-      >
-        <div className="flex items-center gap-1.5 pr-3 border-r mr-1">
-          {COLORS.map(c => (
-            <button
-              key={c.name}
-              className={`w-5 h-5 rounded-full border border-border flex-shrink-0 transition-transform hover:scale-110 ${data.color === c.name || (!data.color && c.name === 'default') ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}`}
-              style={{ backgroundColor: c.value }}
-              onClick={() => onColorChange(c.name)}
-              title={c.name}
-            />
-          ))}
-        </div>
-        <button 
-          onClick={onRotate} 
-          className="p-1.5 hover:bg-muted rounded-md text-muted-foreground hover:text-foreground transition-colors"
-          title="Rotate 90°"
-        >
-          <RotateCw className="w-4 h-4" />
-        </button>
-        <button 
-          onClick={onDelete} 
-          className="p-1.5 hover:bg-destructive/10 rounded-md text-muted-foreground hover:text-destructive transition-colors"
-          title="Delete Shape"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </NodeToolbar>
 
       <div 
         className="relative w-full h-full flex items-center justify-center transition-transform duration-200"
@@ -166,10 +120,10 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
         </div>
       </div>
 
-      <Handle type="target" position={Position.Top} id="top" className="!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity" style={{ opacity: selected ? 1 : 0.3 }} />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity" style={{ opacity: selected ? 1 : 0.3 }} />
-      <Handle type="source" position={Position.Right} id="right" className="!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity" style={{ opacity: selected ? 1 : 0.3 }} />
-      <Handle type="target" position={Position.Left} id="left" className="!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity" style={{ opacity: selected ? 1 : 0.3 }} />
+      <Handle type="target" position={Position.Top} id="top" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      <Handle type="source" position={Position.Bottom} id="bottom" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      <Handle type="source" position={Position.Right} id="right" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+      <Handle type="target" position={Position.Left} id="left" className={`!bg-brand !w-5 !h-5 !border-2 !border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
     </>
   )
 }

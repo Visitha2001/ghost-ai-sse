@@ -20,7 +20,7 @@ export function ShapePanel() {
   }
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-card/85 p-2 shadow-2xl backdrop-blur-md border z-10">
+    <div className="flex items-center gap-2 rounded-full bg-card/85 p-2 shadow-2xl backdrop-blur-md border z-10 h-[52px]">
       {SHAPES.map((shape) => {
         const Icon = shape.icon
         return (

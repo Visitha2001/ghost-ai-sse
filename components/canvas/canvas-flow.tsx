@@ -4,9 +4,11 @@ import { useCallback } from 'react'
 import { ReactFlow, MiniMap, Background, BackgroundVariant, ConnectionMode, useReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useLiveblocksFlow } from '@liveblocks/react-flow'
+import { useUndo, useRedo } from '@liveblocks/react/suspense'
 import { canvasNode, canvasEdge } from '@/types/canvas'
 import { CanvasNode } from './canvas-node'
 import { CustomEdge } from './custom-edge'
+import { useEffect } from 'react'
 
 const nodeTypes = {
   custom: CanvasNode
@@ -18,11 +20,39 @@ const edgeTypes = {
 
 export function CanvasFlow() {
   const { screenToFlowPosition } = useReactFlow()
+  const undo = useUndo()
+  const redo = useRedo()
+
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useLiveblocksFlow<canvasNode, canvasEdge>({
     nodes: { initial: [] },
     edges: { initial: [] },
     suspense: true
   })
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (
+        document.activeElement instanceof HTMLInputElement ||
+        document.activeElement instanceof HTMLTextAreaElement
+      ) {
+        return
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if (e.shiftKey) {
+          redo()
+        } else {
+          undo()
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        redo()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [undo, redo])
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()
@@ -47,7 +77,7 @@ export function CanvasFlow() {
         id: `${shape}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'custom',
         position,
-        data: { label: '', color: 'default', shape },
+        data: { label: '', color: 'slate', shape },
         style: { width, height }
       }
 
