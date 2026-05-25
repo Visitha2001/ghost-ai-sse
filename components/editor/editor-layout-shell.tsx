@@ -40,6 +40,7 @@ export function EditorLayoutShell({ children, ownedProjects, sharedProjects }: E
   // Auto-open AI sidebar when entering a workspace, or keep it closed by default
   React.useEffect(() => {
     if (!activeProject) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsAiSidebarOpen(false)
     }
   }, [activeProject])

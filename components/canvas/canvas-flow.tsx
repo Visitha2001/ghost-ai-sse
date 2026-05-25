@@ -21,6 +21,7 @@ export function CanvasFlow() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         connectionMode={ConnectionMode.Loose}
+        colorMode="dark"
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />

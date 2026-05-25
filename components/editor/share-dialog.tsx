@@ -22,12 +22,20 @@ import {
   ShieldAlert, 
   Mail
 } from "lucide-react"
+import Image from "next/image"
+
+type Collaborator = {
+  id: string;
+  email: string;
+  name?: string;
+  imageUrl?: string;
+}
 
 export function ShareDialog() {
   const { type, isOpen, project, closeDialog } = useProjectDialogs()
 
-  const [collaborators, setCollaborators] = React.useState<any[]>([])
-  const [owner, setOwner] = React.useState<any | null>(null)
+  const [collaborators, setCollaborators] = React.useState<Collaborator[]>([])
+  const [owner, setOwner] = React.useState<Collaborator | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [email, setEmail] = React.useState("")
   const [inviting, setInviting] = React.useState(false)
@@ -61,17 +69,22 @@ export function ShareDialog() {
     } finally {
       setLoading(false)
     }
-  }, [project?.id])
+  }, [project])
 
   React.useEffect(() => {
     if (isOpen && type === "share" && project?.id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCollaborators()
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail("")
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setErrorMsg(null)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuccessMsg(null)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCopied(false)
     }
-  }, [isOpen, type, project?.id, fetchCollaborators])
+  }, [isOpen, type, project, fetchCollaborators])
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -250,9 +263,9 @@ export function ShareDialog() {
                 {owner && (
                   <div className="flex items-center justify-between p-2 rounded-xl bg-muted/30 select-none">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-8 w-8 rounded-full overflow-hidden border border-border/80 bg-muted flex items-center justify-center shrink-0">
+                      <div className="relative h-8 w-8 rounded-full overflow-hidden border border-border/80 bg-muted flex items-center justify-center shrink-0">
                         {owner.imageUrl ? (
-                          <img src={owner.imageUrl} alt={owner.name} className="h-full w-full object-cover" />
+                          <Image src={owner.imageUrl} alt={owner.name || "Owner"} fill className="object-cover" sizes="32px" />
                         ) : (
                           <User className="h-4 w-4 text-muted-foreground" />
                         )}
@@ -273,9 +286,9 @@ export function ShareDialog() {
                   collaborators.map((c) => (
                     <div key={c.id} className="flex items-center justify-between p-2 rounded-xl hover:bg-muted/30 transition-colors group">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-8 w-8 rounded-full overflow-hidden border border-border/80 bg-muted flex items-center justify-center shrink-0">
+                        <div className="relative h-8 w-8 rounded-full overflow-hidden border border-border/80 bg-muted flex items-center justify-center shrink-0">
                           {c.imageUrl ? (
-                            <img src={c.imageUrl} alt={c.name || c.email} className="h-full w-full object-cover" />
+                            <Image src={c.imageUrl} alt={c.name || c.email} fill className="object-cover" sizes="32px" />
                           ) : (
                             <User className="h-4 w-4 text-muted-foreground" />
                           )}
