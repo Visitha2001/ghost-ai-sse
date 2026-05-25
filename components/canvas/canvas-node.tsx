@@ -1,5 +1,6 @@
 import { Handle, Position, NodeProps, NodeResizer, useReactFlow } from '@xyflow/react'
 import { canvasNode } from '@/types/canvas'
+import { Triangle, Star, Cloud, Heart, Octagon, Pentagon, MessageSquare, Shield, Play, Zap, Droplet, Moon, Sun, Flame, Leaf, Box, Gem, Target, Camera } from 'lucide-react'
 
 import { useCallback, useState } from 'react'
 
@@ -51,6 +52,46 @@ function ShapeRenderer({ shape, color }: { shape: string, color: string }) {
           <polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
+    case 'triangle':
+      return <Triangle className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'star':
+      return <Star className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'cloud':
+      return <Cloud className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'heart':
+      return <Heart className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'octagon':
+      return <Octagon className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'pentagon':
+      return <Pentagon className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'message':
+      return <MessageSquare className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'shield':
+      return <Shield className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'play':
+      return <Play className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'zap':
+      return <Zap className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'droplet':
+      return <Droplet className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'moon':
+      return <Moon className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'sun':
+      return <Sun className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'flame':
+      return <Flame className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'leaf':
+      return <Leaf className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'box':
+      return <Box className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'gem':
+      return <Gem className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'target':
+      return <Target className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'camera':
+      return <Camera className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+    case 'emoji':
+      return null
     case 'rectangle':
     default:
       return (
@@ -91,12 +132,28 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
         handleStyle={{ width: 12, height: 12, borderRadius: 2 }}
       />
 
-      <div 
-        className="relative w-full h-full flex items-center justify-center transition-transform duration-200"
-        style={{ transform: `rotate(${rotation}deg)` }}
-        onDoubleClick={handleDoubleClick}
-      >
-        <ShapeRenderer shape={data.shape} color={activeColorValue} />
+      {selected && rotation !== 0 && (
+        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-card text-card-foreground text-xs px-2 py-1 rounded shadow-lg border whitespace-nowrap z-50">
+          {rotation}°
+        </div>
+      )}
+
+      <div className="relative w-full h-full" style={{ containerType: 'size' }}>
+        <div 
+          className="absolute top-1/2 left-1/2 flex items-center justify-center transition-all duration-200"
+          style={{ 
+            width: (rotation % 180 !== 0) ? '100cqh' : '100cqw',
+            height: (rotation % 180 !== 0) ? '100cqw' : '100cqh',
+            transform: `translate(-50%, -50%) rotate(${rotation}deg)`
+          }}
+          onDoubleClick={handleDoubleClick}
+        >
+          <ShapeRenderer shape={data.shape} color={activeColorValue} />
+        {data.shape === 'emoji' && (
+          <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="w-full h-full absolute inset-0 pointer-events-none select-none drop-shadow-md">
+            <text x="50" y="54" dominantBaseline="middle" textAnchor="middle" fontSize="80">{data.emoji}</text>
+          </svg>
+        )}
         <div className="z-10 text-center break-words w-full px-2">
           {isEditing ? (
              <input 
@@ -117,6 +174,7 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
               {data.label || (data.shape === 'rectangle' ? '' : data.shape)}
             </div>
           )}
+        </div>
         </div>
       </div>
 

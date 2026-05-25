@@ -22,7 +22,7 @@ export function PropertiesPanel({
   onNodesChange?: (changes: NodeChange<canvasNode>[]) => void
   onEdgesChange?: (changes: EdgeChange<canvasEdge>[]) => void
 }) {
-  const { updateNodeData, updateEdgeData, deleteElements } = useReactFlow()
+  const { updateNodeData, updateEdgeData, deleteElements, updateNode } = useReactFlow()
   const nodes = useNodes<canvasNode>()
   const edges = useEdges<canvasEdge>()
 
@@ -46,7 +46,24 @@ export function PropertiesPanel({
           ))}
         </div>
         <button
-          onClick={() => updateNodeData(node.id, { rotation: ((node.data.rotation || 0) + 90) % 360 })}
+          onClick={() => {
+            const newRot = ((node.data.rotation || 0) + 90) % 360
+            const currentW = node.style?.width || node.measured?.width || 100
+            const currentH = node.style?.height || node.measured?.height || 100
+            
+            updateNode(node.id, (n) => ({
+              ...n,
+              style: {
+                ...n.style,
+                width: currentH,
+                height: currentW
+              },
+              data: {
+                ...n.data,
+                rotation: newRot
+              }
+            }))
+          }}
           className="p-2 hover:bg-muted rounded-full text-muted-foreground hover:text-foreground transition-colors"
           title="Rotate 90°"
         >

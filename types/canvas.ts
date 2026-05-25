@@ -2,6 +2,7 @@ export type CanvasNodeData = {
   label: string
   color: string
   shape: string
+  emoji?: string
   rotation?: number
 }
 

@@ -9,6 +9,7 @@ import { canvasNode, canvasEdge } from '@/types/canvas'
 import { CanvasNode } from './canvas-node'
 import { CustomEdge } from './custom-edge'
 import { ShapePanel } from './shape-panel'
+import { MoreShapesPanel } from './more-shapes-panel'
 import { PropertiesPanel } from './properties-panel'
 import { useEffect } from 'react'
 
@@ -68,7 +69,7 @@ export function CanvasFlow() {
       const typeData = event.dataTransfer.getData('application/reactflow')
       if (!typeData) return
 
-      const { shape, width, height } = JSON.parse(typeData)
+      const { shape, width, height, emoji } = JSON.parse(typeData)
 
       const position = screenToFlowPosition({
         x: event.clientX,
@@ -79,7 +80,7 @@ export function CanvasFlow() {
         id: `${shape}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'custom',
         position,
-        data: { label: '', color: 'slate', shape },
+        data: { label: '', color: 'slate', shape, emoji },
         style: { width, height }
       }
 
@@ -112,6 +113,7 @@ export function CanvasFlow() {
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-4">
           <ShapePanel />
+          <MoreShapesPanel />
           <PropertiesPanel onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} />
         </div>
       </div>
