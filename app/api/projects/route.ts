@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       if (body.id) {
         id = body.id;
       }
-    } catch (e) {
+    } catch {
       // Ignore JSON parse errors
     }
 

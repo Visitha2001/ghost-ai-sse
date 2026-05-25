@@ -1,7 +1,9 @@
 "use client"
 
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react"
+import { ReactFlowProvider } from '@xyflow/react'
 import { CanvasFlow } from "./canvas-flow"
+import { ShapePanel } from "./shape-panel"
 import { ErrorBoundary } from "./error-boundary"
 import { Loader2, AlertTriangle } from "lucide-react"
 
@@ -27,7 +29,12 @@ export function CanvasWrapper({ roomId }: { roomId: string }) {
               <p>Loading collaborative canvas...</p>
             </div>
           }>
-            <CanvasFlow />
+            <div className="relative h-full w-full">
+              <ReactFlowProvider>
+                <CanvasFlow />
+                <ShapePanel />
+              </ReactFlowProvider>
+            </div>
           </ClientSideSuspense>
         </RoomProvider>
       </ErrorBoundary>

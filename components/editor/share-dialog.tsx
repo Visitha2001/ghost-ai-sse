@@ -75,13 +75,9 @@ export function ShareDialog() {
     if (isOpen && type === "share" && project?.id) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchCollaborators()
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail("")
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setErrorMsg(null)
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuccessMsg(null)
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCopied(false)
     }
   }, [isOpen, type, project, fetchCollaborators])

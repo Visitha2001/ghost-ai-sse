@@ -22,8 +22,9 @@ export async function POST(request: NextRequest) {
   // Ensure the Liveblocks room exists
   try {
     await liveblocks.getRoom(room);
-  } catch (err: any) {
-    if (err.status === 404) {
+  } catch (err: unknown) {
+    const error = err as { status?: number };
+    if (error.status === 404) {
       await liveblocks.createRoom(room, {
         defaultAccesses: [], // Access is managed via session tokens
       });
