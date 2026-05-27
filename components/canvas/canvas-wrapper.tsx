@@ -3,8 +3,7 @@
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react"
 import { ReactFlowProvider } from '@xyflow/react'
 import { CanvasFlow } from "./canvas-flow"
-import { ShapePanel } from "./shape-panel"
-import { PropertiesPanel } from "./properties-panel"
+
 import { ErrorBoundary } from "./error-boundary"
 import { Loader2, AlertTriangle } from "lucide-react"
 
@@ -33,10 +32,6 @@ export function CanvasWrapper({ roomId }: { roomId: string }) {
             <div className="relative h-full w-full">
               <ReactFlowProvider>
                 <CanvasFlow />
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300">
-                  <ShapePanel />
-                  <PropertiesPanel />
-                </div>
               </ReactFlowProvider>
             </div>
           </ClientSideSuspense>
