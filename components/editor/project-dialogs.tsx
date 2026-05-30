@@ -22,9 +22,8 @@ function slugify(text: string) {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(/[^\w-]+/g, "") // Remove all non-word chars
-    .replace(/--+/g, "-") // Replace multiple - with single -
+    .replace(/[\s\W-]+/g, "-") // Replace spaces and non-word chars with -
+    .replace(/^-+|-+$/g, "") // Remove leading and trailing hyphens
 }
 
 export function ProjectDialogs() {
@@ -40,10 +39,9 @@ export function ProjectDialogs() {
 
   const slugError = React.useMemo(() => {
     if (!formName) return null
-    if (formName.length < 3) return "Project name must be at least 3 characters."
+    const trimmed = formName.trim()
+    if (trimmed.length < 3) return "Project name must be at least 3 characters."
     if (formName.length > 48) return "Project name must be less than 48 characters."
-    if (!/^[a-z0-9-]+$/.test(formName)) return "Project name can only contain lowercase letters, numbers, and hyphens."
-    if (formName.startsWith("-") || formName.endsWith("-")) return "Project name cannot start or end with a hyphen."
     return null
   }, [formName])
 
@@ -82,9 +80,9 @@ export function ProjectDialogs() {
                 <Label htmlFor="create-name">Project Name</Label>
                 <Input
                   id="create-name"
-                  placeholder="e.g. my-nextjs-app"
+                  placeholder="e.g. My Next.js App"
                   value={formName}
-                  onChange={(e) => setFormName(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
+                  onChange={(e) => setFormName(e.target.value)}
                   autoFocus
                   required
                 />
@@ -125,9 +123,9 @@ export function ProjectDialogs() {
                 <Label htmlFor="rename-name">New Project Name</Label>
                 <Input
                   id="rename-name"
-                  placeholder="project-name"
+                  placeholder="Project Name"
                   value={formName}
-                  onChange={(e) => setFormName(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
+                  onChange={(e) => setFormName(e.target.value)}
                   autoFocus
                   required
                 />
