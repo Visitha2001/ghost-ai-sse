@@ -53,43 +53,43 @@ function ShapeRenderer({ shape, color }: { shape: string, color: string }) {
         </svg>
       )
     case 'triangle':
-      return <Triangle className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Triangle className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'star':
-      return <Star className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Star className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'cloud':
-      return <Cloud className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Cloud className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'heart':
-      return <Heart className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Heart className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'octagon':
-      return <Octagon className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Octagon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'pentagon':
-      return <Pentagon className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Pentagon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'message':
-      return <MessageSquare className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <MessageSquare className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'shield':
-      return <Shield className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Shield className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'play':
-      return <Play className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Play className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'zap':
-      return <Zap className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Zap className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'droplet':
-      return <Droplet className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Droplet className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'moon':
-      return <Moon className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Moon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'sun':
-      return <Sun className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Sun className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'flame':
-      return <Flame className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Flame className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'leaf':
-      return <Leaf className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Leaf className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'box':
-      return <Box className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Box className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'gem':
-      return <Gem className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Gem className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'target':
-      return <Target className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Target className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'camera':
-      return <Camera className="w-full h-full absolute inset-0" fill={fillStyle} stroke={color} strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+      return <Camera className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
     case 'emoji':
       return null
     case 'rectangle':
