@@ -26,7 +26,7 @@ export function CanvasFlow() {
   const undo = useUndo()
   const redo = useRedo()
 
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useLiveblocksFlow<canvasNode, canvasEdge>({
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } = useLiveblocksFlow<canvasNode, canvasEdge>({
     nodes: { initial: [] },
     edges: { initial: [] },
     suspense: true
@@ -97,6 +97,7 @@ export function CanvasFlow() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onDelete={onDelete}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{ type: 'custom' }}
@@ -104,6 +105,7 @@ export function CanvasFlow() {
         onDrop={onDrop}
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
+        deleteKeyCode={['Backspace', 'Delete']}
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />
@@ -114,7 +116,7 @@ export function CanvasFlow() {
         <div className="pointer-events-auto flex items-center gap-4">
           <ShapePanel />
           <MoreShapesPanel />
-          <PropertiesPanel onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} />
+          <PropertiesPanel onDelete={onDelete} />
         </div>
       </div>
     </div>
