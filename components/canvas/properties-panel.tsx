@@ -1,5 +1,5 @@
 import { useNodes, useEdges, useReactFlow } from '@xyflow/react'
-import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight } from 'lucide-react'
+import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight, Trash2 } from 'lucide-react'
 import { canvasNode, canvasEdge } from '@/types/canvas'
 
 const COLORS = [
@@ -13,16 +13,14 @@ const COLORS = [
   { name: 'pink', value: '#ec4899' },
 ]
 
-import { type NodeChange, type EdgeChange } from '@xyflow/react'
+
 
 export function PropertiesPanel({
-  onNodesChange,
-  onEdgesChange
+  onDelete
 }: {
-  onNodesChange?: (changes: NodeChange<canvasNode>[]) => void
-  onEdgesChange?: (changes: EdgeChange<canvasEdge>[]) => void
+  onDelete?: (params: { nodes: canvasNode[]; edges: canvasEdge[] }) => void
 }) {
-  const { updateNodeData, updateEdgeData, deleteElements, updateNode } = useReactFlow()
+  const { updateNodeData, updateEdgeData, updateNode } = useReactFlow()
   const nodes = useNodes<canvasNode>()
   const edges = useEdges<canvasEdge>()
 
@@ -68,6 +66,14 @@ export function PropertiesPanel({
           title="Rotate 90°"
         >
           <RotateCw className="w-5 h-5" />
+        </button>
+        <div className="w-px h-6 bg-border mx-1" />
+        <button
+          onClick={() => onDelete?.({ nodes: [node], edges: [] })}
+          className="p-2 hover:bg-destructive/10 text-destructive rounded-full transition-colors"
+          title="Delete Shape"
+        >
+          <Trash2 className="w-5 h-5" />
         </button>
 
       </div>
@@ -115,6 +121,15 @@ export function PropertiesPanel({
           <button onClick={() => updateEdgeData(edge.id, { arrow: 'backward' })} className={`p-2 rounded-full hover:bg-muted ${arrowConfig === 'backward' ? 'bg-brand/20 text-brand' : ''}`} title="Backward Arrow"><ArrowLeft className="w-5 h-5" /></button>
           <button onClick={() => updateEdgeData(edge.id, { arrow: 'both' })} className={`p-2 rounded-full hover:bg-muted ${arrowConfig === 'both' ? 'bg-brand/20 text-brand' : ''}`} title="Both Arrows"><ArrowLeftRight className="w-5 h-5" /></button>
         </div>
+        
+        <div className="w-px h-6 bg-border mx-1" />
+        <button
+          onClick={() => onDelete?.({ nodes: [], edges: [edge] })}
+          className="p-2 hover:bg-destructive/10 text-destructive rounded-full transition-colors"
+          title="Delete Connection"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
       </div>
     )
   }
