@@ -58,7 +58,7 @@ export function EditorLayoutShell({ children, ownedProjects, sharedProjects }: E
       />
 
       {/* Main Body Layout */}
-      <div className="flex flex-1 pt-14 w-full h-[calc(100vh-3.5rem)] overflow-hidden">
+      <div className="flex flex-1 pt-[4.75rem] w-full h-[calc(100vh-4.75rem)] overflow-hidden">
         {/* Left Project Sidebar */}
         <ProjectSidebar 
           isOpen={isSidebarOpen} 
