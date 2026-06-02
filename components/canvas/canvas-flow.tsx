@@ -112,7 +112,7 @@ export function CanvasFlow() {
         <MiniMap />
       </ReactFlow>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300 pointer-events-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-4">
           <ShapePanel />
           <MoreShapesPanel />

@@ -91,13 +91,13 @@ export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
     <>
       {isOpen && (
         <div 
-          className="fixed inset-0 top-14 bg-background/80 backdrop-blur-sm z-40 md:hidden" 
+          className="fixed inset-0 top-[4.75rem] bg-background/80 backdrop-blur-sm z-40 md:hidden" 
           onClick={onClose}
         />
       )}
       <aside
         className={cn(
-          "fixed top-[4.5rem] bottom-4 left-4 h-[calc(100vh-5.5rem)] w-64 bg-card/85 backdrop-blur-md border border-border/80 shadow-2xl z-50 flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ease-in-out",
+          "fixed top-[5rem] bottom-4 left-4 h-[calc(100vh-6rem)] w-64 bg-card/85 backdrop-blur-md border border-border/80 shadow-2xl z-50 flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ease-in-out",
           isOpen ? "translate-x-0 opacity-100" : "-translate-x-[calc(100%+1.5rem)] opacity-0 pointer-events-none"
         )}
       >
