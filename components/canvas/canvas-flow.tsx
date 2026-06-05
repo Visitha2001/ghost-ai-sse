@@ -80,7 +80,7 @@ export function CanvasFlow() {
         id: `${shape}-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'custom',
         position,
-        data: { label: '', color: 'slate', shape, emoji },
+        data: { label: '', color: 'neutral', shape, emoji },
         style: { width, height }
       }
 

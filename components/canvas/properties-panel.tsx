@@ -1,8 +1,8 @@
 import { useNodes, useEdges, useReactFlow } from '@xyflow/react'
 import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight, Trash2 } from 'lucide-react'
-import { canvasNode, canvasEdge } from '@/types/canvas'
+import { canvasNode, canvasEdge, NODE_COLORS } from '@/types/canvas'
 
-const COLORS = [
+const EDGE_COLORS = [
   { name: 'slate', value: '#64748b' },
   { name: 'red', value: '#ef4444' },
   { name: 'orange', value: '#f97316' },
@@ -33,12 +33,15 @@ export function PropertiesPanel({
     return (
       <div className="flex items-center gap-1 bg-card/85 p-2 shadow-2xl backdrop-blur-md border rounded-full h-[52px]">
         <div className="flex items-center gap-1.5 px-2 border-r mr-1">
-          {COLORS.map(c => (
+          {NODE_COLORS.map(c => (
             <button
               key={c.name}
-              className={`w-5 h-5 rounded-full border border-border flex-shrink-0 transition-transform hover:scale-110 ${node.data.color === c.name || (!node.data.color && c.name === 'slate') ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}`}
-              style={{ backgroundColor: c.value }}
-              onClick={() => updateNodeData(node.id, { color: c.name })}
+              className={`w-5 h-5 rounded-full flex-shrink-0 transition-transform hover:scale-110 ${node.data.color === c.name || (!node.data.color && c.name === 'neutral') ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}`}
+              style={{
+                backgroundColor: c.fill,
+                border: `2px solid ${c.text}`,
+              }}
+              onClick={() => updateNodeData(node.id, { color: c.name, textColor: c.text })}
               title={c.name}
             />
           ))}
@@ -89,7 +92,7 @@ export function PropertiesPanel({
     return (
       <div className="flex items-center gap-1 bg-card/85 p-2 shadow-2xl backdrop-blur-md border rounded-full h-[52px]">
         <div className="flex items-center gap-1.5 px-2 border-r mr-1">
-          {COLORS.map(c => (
+          {EDGE_COLORS.map(c => (
             <button
               key={c.name}
               className={`w-5 h-5 rounded-full border border-border flex-shrink-0 transition-transform hover:scale-110 ${edge.data?.color === c.name || (!edge.data?.color && c.name === 'default') ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}`}

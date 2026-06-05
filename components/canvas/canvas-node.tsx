@@ -1,102 +1,97 @@
 import { Handle, Position, NodeProps, NodeResizer, useReactFlow } from '@xyflow/react'
-import { canvasNode } from '@/types/canvas'
+import { canvasNode, NODE_COLORS, DEFAULT_NODE_COLOR } from '@/types/canvas'
 import { Triangle, Star, Cloud, Heart, Octagon, Pentagon, MessageSquare, Shield, Play, Zap, Droplet, Moon, Sun, Flame, Leaf, Box, Gem, Target, Camera } from 'lucide-react'
+import { NodeColorToolbar } from './node-color-toolbar'
 
 import { useCallback, useState } from 'react'
 
-const COLORS = [
-  { name: 'slate', value: '#64748b' },
-  { name: 'red', value: '#ef4444' },
-  { name: 'orange', value: '#f97316' },
-  { name: 'amber', value: '#f59e0b' },
-  { name: 'green', value: '#22c55e' },
-  { name: 'blue', value: '#3b82f6' },
-  { name: 'purple', value: '#a855f7' },
-  { name: 'pink', value: '#ec4899' },
-]
+/** Resolve node fill + text colors from the color name */
+function resolveColors(colorName: string | undefined) {
+  const pair = NODE_COLORS.find(c => c.name === colorName) || DEFAULT_NODE_COLOR
+  return { fill: pair.fill, text: pair.text }
+}
 
-function ShapeRenderer({ shape, color }: { shape: string, color: string }) {
-  // Try to use CSS variables if it's our brand color, else use hex
-  const isDefault = color === 'hsl(var(--brand))'
-  const fillStyle = isDefault ? 'hsl(var(--brand) / 0.15)' : `${color}26` // ~15% opacity hex (26)
+function ShapeRenderer({ shape, fill, stroke }: { shape: string, fill: string, stroke: string }) {
+  // Use fill color for shape background and stroke color for shape outline
+  const fillOpacity = `${fill}` // The fill IS the background
   
   switch (shape) {
     case 'diamond':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
-          <polygon points="50,0 100,50 50,100 0,50" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <polygon points="50,0 100,50 50,100 0,50" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
     case 'circle':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
-          <circle cx="50" cy="50" r="49" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <circle cx="50" cy="50" r="49" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
     case 'pill':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
-          <rect x="0" y="0" width="100" height="100" rx="50" ry="50" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <rect x="0" y="0" width="100" height="100" rx="50" ry="50" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
     case 'cylinder':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
-          <path d="M 0 20 C 0 0, 100 0, 100 20 L 100 80 C 100 100, 0 100, 0 80 Z" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
-          <ellipse cx="50" cy="20" rx="50" ry="20" fill="transparent" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <path d="M 0 20 C 0 0, 100 0, 100 20 L 100 80 C 100 100, 0 100, 0 80 Z" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <ellipse cx="50" cy="20" rx="50" ry="20" fill="transparent" stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
     case 'hexagon':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
-          <polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
     case 'triangle':
-      return <Triangle className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Triangle className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'star':
-      return <Star className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Star className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'cloud':
-      return <Cloud className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Cloud className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'heart':
-      return <Heart className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Heart className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'octagon':
-      return <Octagon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Octagon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'pentagon':
-      return <Pentagon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Pentagon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'message':
-      return <MessageSquare className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <MessageSquare className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'shield':
-      return <Shield className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Shield className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'play':
-      return <Play className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Play className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'zap':
-      return <Zap className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Zap className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'droplet':
-      return <Droplet className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Droplet className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'moon':
-      return <Moon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Moon className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'sun':
-      return <Sun className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Sun className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'flame':
-      return <Flame className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Flame className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'leaf':
-      return <Leaf className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Leaf className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'box':
-      return <Box className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Box className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'gem':
-      return <Gem className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Gem className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'target':
-      return <Target className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Target className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'camera':
-      return <Camera className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillStyle} stroke={color} strokeWidth={2} />
+      return <Camera className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'emoji':
       return null
     case 'rectangle':
     default:
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
-          <rect x="0" y="0" width="100" height="100" rx="6" fill={fillStyle} stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+          <rect x="0" y="0" width="100" height="100" rx="6" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
   }
@@ -120,7 +115,7 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
   }, [id, editText, data.label, updateNodeData])
 
   const rotation = data.rotation || 0
-  const activeColorValue = COLORS.find(c => c.name === data.color)?.value || COLORS[0].value
+  const { fill, text } = resolveColors(data.color)
 
   return (
     <>
@@ -130,6 +125,13 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
         minWidth={40} 
         minHeight={40} 
         handleStyle={{ width: 12, height: 12, borderRadius: 2 }}
+      />
+
+      {/* Floating color toolbar above node */}
+      <NodeColorToolbar
+        nodeId={id}
+        currentColor={data.color}
+        isVisible={!!selected}
       />
 
       {selected && rotation !== 0 && (
@@ -148,7 +150,7 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
           }}
           onDoubleClick={handleDoubleClick}
         >
-          <ShapeRenderer shape={data.shape} color={activeColorValue} />
+          <ShapeRenderer shape={data.shape} fill={fill} stroke={text} />
         {data.shape === 'emoji' && (
           <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="w-full h-full absolute inset-0 pointer-events-none select-none drop-shadow-md">
             <text x="50" y="54" dominantBaseline="middle" textAnchor="middle" fontSize="80">{data.emoji}</text>
@@ -167,10 +169,14 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
                    handleBlurOrEnter()
                  }
                }}
-               className="nodrag w-full text-center bg-transparent border-none focus:ring-0 text-foreground font-medium text-sm outline-none"
+               className="nodrag w-full text-center bg-transparent border-none focus:ring-0 font-medium text-sm outline-none"
+               style={{ color: text }}
              />
           ) : (
-            <div className="select-none pointer-events-none text-foreground font-medium text-sm">
+            <div
+              className="select-none pointer-events-none font-medium text-sm"
+              style={{ color: text }}
+            >
               {data.label || (data.shape === 'rectangle' ? '' : data.shape)}
             </div>
           )}
