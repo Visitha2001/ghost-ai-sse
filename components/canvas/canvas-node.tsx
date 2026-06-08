@@ -16,32 +16,32 @@ function ShapeRenderer({ shape, fill, stroke }: { shape: string, fill: string, s
   const fillOpacity = `${fill}` // The fill IS the background
   
   switch (shape) {
-    case 'diamond':
+    case 'decision':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
           <polygon points="50,0 100,50 50,100 0,50" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
-    case 'circle':
+    case 'terminator':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
           <circle cx="50" cy="50" r="49" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
-    case 'pill':
+    case 'connector':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
           <rect x="0" y="0" width="100" height="100" rx="50" ry="50" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
-    case 'cylinder':
+    case 'database':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
           <path d="M 0 20 C 0 0, 100 0, 100 20 L 100 80 C 100 100, 0 100, 0 80 Z" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
           <ellipse cx="50" cy="20" rx="50" ry="20" fill="transparent" stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
         </svg>
       )
-    case 'hexagon':
+    case 'preparation':
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
           <polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill={fillOpacity} stroke={stroke} strokeWidth="2" vectorEffect="non-scaling-stroke" />
@@ -87,7 +87,7 @@ function ShapeRenderer({ shape, fill, stroke }: { shape: string, fill: string, s
       return <Camera className="w-full h-full absolute inset-0 [&_*]:[vector-effect:non-scaling-stroke]" fill={fillOpacity} stroke={stroke} strokeWidth={2} />
     case 'emoji':
       return null
-    case 'rectangle':
+    case 'process':
     default:
       return (
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0">
@@ -177,7 +177,7 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
               className="select-none pointer-events-none font-medium text-sm"
               style={{ color: text }}
             >
-              {data.label || (data.shape === 'rectangle' ? '' : data.shape)}
+              {data.label || (data.shape === 'process' ? '' : data.shape)}
             </div>
           )}
         </div>

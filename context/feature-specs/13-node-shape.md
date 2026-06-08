@@ -3,8 +3,8 @@ Replace the placeholder node renderer with proper shape rendering and a drag pre
 ## Implementation
 
 1. Replace the placeholder node shape rendering.
-   - rectangle, pill, and circle should use CSS styling
-   - diamond, hexagon, and cylinder should render with SVG shapes
+   - process, connector, and terminator should use CSS styling
+   - decision, preparation, and database should render with SVG shapes
    - SVG shapes should scale with node size
    - keep borders subtle at rest and brighter when selected
 
@@ -27,7 +27,7 @@ Replace the placeholder node renderer with proper shape rendering and a drag pre
 ## Check When Done
 
 - Nodes render the correct shape variant for each type.
-- CSS shapes render correctly for rectangle, pill, and circle.
-- SVG shapes render and scale correctly for diamond, hexagon, and cylinder.
+- CSS shapes render correctly for process, connector, and terminator.
+- SVG shapes render and scale correctly for decision, preparation, and database.
 - Shape dragging shows a ghost preview matching the dragged shape.
 - `npm run build` passes without type errors.

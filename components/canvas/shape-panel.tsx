@@ -1,12 +1,12 @@
 import { Square, Diamond, Circle, Hexagon, Cylinder, Pill } from "lucide-react"
 
 const SHAPES = [
-  { name: 'rectangle', icon: Square, width: 160, height: 80 },
-  { name: 'diamond', icon: Diamond, width: 100, height: 100 },
-  { name: 'circle', icon: Circle, width: 100, height: 100 },
-  { name: 'pill', icon: Pill, width: 140, height: 60 },
-  { name: 'cylinder', icon: Cylinder, width: 80, height: 100 },
-  { name: 'hexagon', icon: Hexagon, width: 100, height: 100 },
+  { name: 'process', icon: Square, width: 160, height: 80 },
+  { name: 'decision', icon: Diamond, width: 100, height: 100 },
+  { name: 'terminator', icon: Circle, width: 100, height: 100 },
+  { name: 'connector', icon: Pill, width: 140, height: 60 },
+  { name: 'database', icon: Cylinder, width: 80, height: 100 },
+  { name: 'preparation', icon: Hexagon, width: 100, height: 100 },
 ]
 
 export function ShapePanel() {

@@ -5,19 +5,19 @@ Add a bottom shape panel so users can drag shapes onto the canvas and create new
 1. Add a floating pill-shaped toolbar at the bottom-center of the canvas.
 
 2. Add draggable icon buttons for these shapes:
-   - rectangle
-   - diamond
-   - circle
-   - pill
-   - cylinder
-   - hexagon
+   - process
+   - decision
+   - terminator
+   - connector
+   - database
+   - preparation
 
 3. When dragging a shape, include the shape name and default size in the drag payload.
 
    Use sensible default sizes:
-   - rectangles should be wider than tall
-   - circles should be square
-   - diamonds should be slightly larger so labels have room
+   - process shapes should be wider than tall
+   - terminators should be square
+   - decisions should be slightly larger so labels have room
 
 4. Add `dragover` and `drop` handling to the canvas wrapper.
 
