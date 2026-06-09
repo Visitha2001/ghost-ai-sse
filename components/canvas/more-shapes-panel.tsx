@@ -58,8 +58,8 @@ export function MoreShapesPanel() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex h-[52px] w-[52px] items-center justify-center rounded-full shadow-2xl backdrop-blur-md border z-10 transition-colors ${
-          isOpen ? 'bg-muted text-foreground' : 'bg-card/85 text-muted-foreground hover:text-foreground hover:bg-muted'
+        className={`flex h-[52px] w-[52px] items-center justify-center rounded-full shadow-2xl backdrop-blur-xl border border-white/10 z-10 transition-colors ${
+          isOpen ? 'bg-muted text-foreground' : 'bg-background/40 text-muted-foreground hover:text-foreground hover:bg-muted'
         }`}
         title="More Shapes"
       >
@@ -67,7 +67,7 @@ export function MoreShapesPanel() {
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-[60px] left-1/2 -translate-x-1/2 w-48 bg-card/95 backdrop-blur-md border shadow-2xl rounded-2xl p-3 z-50">
+        <div className="absolute bottom-[60px] left-1/2 -translate-x-1/2 w-48 bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-3 z-50">
           <div 
             className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}

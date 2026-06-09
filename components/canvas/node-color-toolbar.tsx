@@ -35,7 +35,7 @@ export function NodeColorToolbar({ nodeId, currentColor, isVisible }: NodeColorT
     >
       {/* Wrapper stops drag/pan from propagating */}
       <div
-        className="nodrag nopan flex items-center gap-1.5 px-2.5 py-2 bg-card/90 backdrop-blur-md border border-border/60 rounded-full shadow-2xl"
+        className="nodrag nopan flex items-center gap-1.5 px-2.5 py-2 bg-background/40 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
       >

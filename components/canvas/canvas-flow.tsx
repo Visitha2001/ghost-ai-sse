@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback } from 'react'
-import { ReactFlow, MiniMap, Background, BackgroundVariant, ConnectionMode, useReactFlow } from '@xyflow/react'
+import { ReactFlow, Background, BackgroundVariant, ConnectionMode, useReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useLiveblocksFlow } from '@liveblocks/react-flow'
 import { useUndo, useRedo } from '@liveblocks/react/suspense'
@@ -11,7 +11,8 @@ import { CustomEdge } from './custom-edge'
 import { ShapePanel } from './shape-panel'
 import { MoreShapesPanel } from './more-shapes-panel'
 import { PropertiesPanel } from './properties-panel'
-import { useEffect } from 'react'
+import { CanvasControls } from './canvas-controls'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 
 const nodeTypes = {
   custom: CanvasNode
@@ -32,30 +33,7 @@ export function CanvasFlow() {
     suspense: true
   })
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an input
-      if (
-        document.activeElement instanceof HTMLInputElement ||
-        document.activeElement instanceof HTMLTextAreaElement
-      ) {
-        return
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-        if (e.shiftKey) {
-          redo()
-        } else {
-          undo()
-        }
-      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
-        redo()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [undo, redo])
+  useKeyboardShortcuts({ undo, redo })
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()
@@ -109,8 +87,9 @@ export function CanvasFlow() {
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />
-        <MiniMap />
       </ReactFlow>
+
+      <CanvasControls />
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-4">

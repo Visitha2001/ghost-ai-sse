@@ -1,5 +1,5 @@
 import { useNodes, useEdges, useReactFlow } from '@xyflow/react'
-import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight, Trash2 } from 'lucide-react'
+import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight, Trash2, Spline, CornerDownRight } from 'lucide-react'
 import { canvasNode, canvasEdge, NODE_COLORS } from '@/types/canvas'
 
 const EDGE_COLORS = [
@@ -31,7 +31,7 @@ export function PropertiesPanel({
     const node = selectedNodes[0]
 
     return (
-      <div className="flex items-center gap-1 bg-card/85 p-2 shadow-2xl backdrop-blur-md border rounded-full h-[52px]">
+      <div className="flex items-center gap-1 bg-background/40 p-2 shadow-2xl backdrop-blur-xl border border-white/10 rounded-full h-[52px]">
         <div className="flex items-center gap-1.5 px-2 border-r mr-1">
           {NODE_COLORS.map(c => (
             <button
@@ -90,7 +90,7 @@ export function PropertiesPanel({
     const arrowConfig = edge.data?.arrow || 'none'
 
     return (
-      <div className="flex items-center gap-1 bg-card/85 p-2 shadow-2xl backdrop-blur-md border rounded-full h-[52px]">
+      <div className="flex items-center gap-1 bg-background/40 p-2 shadow-2xl backdrop-blur-xl border border-white/10 rounded-full h-[52px]">
         <div className="flex items-center gap-1.5 px-2 border-r mr-1">
           {EDGE_COLORS.map(c => (
             <button
