@@ -33,6 +33,7 @@ export type CanvasEdgeData = {
   thickness?: number
   style?: 'solid' | 'dashed' | 'dotted'
   arrow?: 'none' | 'forward' | 'backward' | 'both'
+  path?: 'bezier' | 'straight' | 'step'
 }
 
 export type canvasNode = Node<CanvasNodeData>

@@ -1,7 +1,7 @@
 import { Handle, Position, NodeProps, NodeResizer, useReactFlow } from '@xyflow/react'
 import { canvasNode, NODE_COLORS, DEFAULT_NODE_COLOR } from '@/types/canvas'
 import { Triangle, Star, Cloud, Heart, Octagon, Pentagon, MessageSquare, Shield, Play, Zap, Droplet, Moon, Sun, Flame, Leaf, Box, Gem, Target, Camera } from 'lucide-react'
-import { NodeColorToolbar } from './node-color-toolbar'
+
 
 import { useCallback, useState } from 'react'
 
@@ -127,12 +127,7 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
         handleStyle={{ width: 12, height: 12, borderRadius: 2 }}
       />
 
-      {/* Floating color toolbar above node */}
-      <NodeColorToolbar
-        nodeId={id}
-        currentColor={data.color}
-        isVisible={!!selected}
-      />
+
 
       {selected && rotation !== 0 && (
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-card text-card-foreground text-xs px-2 py-1 rounded shadow-lg border whitespace-nowrap z-50">
