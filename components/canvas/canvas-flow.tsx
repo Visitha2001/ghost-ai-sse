@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ReactFlow, Background, BackgroundVariant, ConnectionMode, useReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useLiveblocksFlow } from '@liveblocks/react-flow'
@@ -13,6 +13,7 @@ import { MoreShapesPanel } from './more-shapes-panel'
 import { PropertiesPanel } from './properties-panel'
 import { CanvasControls } from './canvas-controls'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
+import { useTemplateImport } from '@/hooks/use-template-import'
 
 const nodeTypes = {
   custom: CanvasNode
@@ -34,6 +35,39 @@ export function CanvasFlow() {
   })
 
   useKeyboardShortcuts({ undo, redo })
+
+  /* ── Template import handler ───────────────────────────────────── */
+  const pendingTemplate = useTemplateImport((s) => s.pendingTemplate)
+  const clearPending = useTemplateImport((s) => s.clearPending)
+  const { fitView } = useReactFlow()
+
+  useEffect(() => {
+    if (!pendingTemplate) return
+
+    // 1. Remove all existing nodes
+    if (nodes.length > 0) {
+      onNodesChange(nodes.map((n) => ({ type: 'remove' as const, id: n.id })))
+    }
+    // 2. Remove all existing edges
+    if (edges.length > 0) {
+      onEdgesChange(edges.map((e) => ({ type: 'remove' as const, id: e.id })))
+    }
+
+    // 3. Add template nodes
+    onNodesChange(pendingTemplate.nodes.map((n) => ({ type: 'add' as const, item: n })))
+
+    // 4. Add template edges
+    onEdgesChange(pendingTemplate.edges.map((e) => ({ type: 'add' as const, item: e })))
+
+    // 5. Fit view after a tick to let React Flow measure
+    requestAnimationFrame(() => {
+      fitView({ padding: 0.15, duration: 400 })
+    })
+
+    // 6. Clear the pending signal
+    clearPending()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingTemplate])
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()

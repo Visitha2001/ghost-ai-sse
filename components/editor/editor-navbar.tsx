@@ -1,11 +1,13 @@
 import * as React from "react"
-import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home } from "lucide-react"
+import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home, LayoutTemplate } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { UserButton } from "@clerk/nextjs"
 import { cn, formatProjectName } from "@/lib/utils"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useProjectDialogs } from "@/hooks/use-project-dialogs"
+import { useTemplateImport } from "@/hooks/use-template-import"
+import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal"
 
 interface EditorNavbarProps {
   isSidebarOpen: boolean
@@ -29,6 +31,8 @@ export function EditorNavbar({
   const openDialog = useProjectDialogs((state) => state.openDialog)
   const storeOwned = useProjectDialogs((state) => state.ownedProjects)
   const storeShared = useProjectDialogs((state) => state.sharedProjects)
+  const requestImport = useTemplateImport((s) => s.requestImport)
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false)
 
   const activeProject = React.useMemo(() => {
     if (!roomId) return undefined
@@ -79,6 +83,16 @@ export function EditorNavbar({
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setIsTemplateModalOpen(true)}
+              className="rounded-xl h-9 px-3.5 gap-2 border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border text-xs font-medium transition-all duration-200"
+              aria-label="Open starter templates"
+            >
+              <LayoutTemplate className="h-4 w-4" />
+              Templates
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => activeProject && openDialog("share", activeProject)}
               className="rounded-xl h-9 px-3.5 gap-2 border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border text-xs font-medium transition-all duration-200"
             >
@@ -107,6 +121,13 @@ export function EditorNavbar({
           <UserButton />
         </div>
       </div>
+
+      {/* Starter Templates Modal */}
+      <StarterTemplatesModal
+        open={isTemplateModalOpen}
+        onOpenChange={setIsTemplateModalOpen}
+        onImport={requestImport}
+      />
     </header>
   )
 }
