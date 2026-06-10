@@ -84,6 +84,7 @@ export function CanvasFlow() {
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
         deleteKeyCode={['Backspace', 'Delete']}
+        proOptions={{ hideAttribution: true }}
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />
