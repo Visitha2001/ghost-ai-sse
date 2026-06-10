@@ -120,11 +120,20 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
   return (
     <>
       <NodeResizer 
-        color="hsl(var(--brand))" 
+        color={text} 
         isVisible={selected} 
         minWidth={40} 
         minHeight={40} 
-        handleStyle={{ width: 12, height: 12, borderRadius: 2 }}
+        handleStyle={{
+          width: 14,
+          height: 14,
+          borderRadius: '50%',
+          background: 'transparent',
+          border: 'none',
+          boxShadow: `inset 0 0 0 4px ${text}`,
+          backgroundClip: 'content-box',
+          padding: 3,
+        }}
       />
 
 
@@ -180,16 +189,24 @@ export function CanvasNode({ id, data, selected }: NodeProps<canvasNode>) {
       </div>
 
       <Handle type="target" position={Position.Top} id="top" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border border-background" style={{ backgroundColor: text }} />
+        </div>
       </Handle>
       <Handle type="source" position={Position.Bottom} id="bottom" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border border-background" style={{ backgroundColor: text }} />
+        </div>
       </Handle>
       <Handle type="source" position={Position.Right} id="right" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border border-background" style={{ backgroundColor: text }} />
+        </div>
       </Handle>
       <Handle type="target" position={Position.Left} id="left" className="!w-0 !h-0 !min-w-0 !min-h-0 !border-0 bg-transparent">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-brand border-2 border-background transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full transition-opacity ${selected ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border border-background" style={{ backgroundColor: text }} />
+        </div>
       </Handle>
     </>
   )
