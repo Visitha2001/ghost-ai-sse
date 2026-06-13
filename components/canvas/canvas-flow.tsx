@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react'
 import { ReactFlow, Background, BackgroundVariant, ConnectionMode, useReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useLiveblocksFlow } from '@liveblocks/react-flow'
-import { useUndo, useRedo } from '@liveblocks/react/suspense'
+import { useUndo, useRedo, useUpdateMyPresence } from '@liveblocks/react/suspense'
 import { canvasNode, canvasEdge } from '@/types/canvas'
 import { CanvasNode } from './canvas-node'
 import { CustomEdge } from './custom-edge'
@@ -12,6 +12,8 @@ import { ShapePanel } from './shape-panel'
 import { MoreShapesPanel } from './more-shapes-panel'
 import { PropertiesPanel } from './properties-panel'
 import { CanvasControls } from './canvas-controls'
+import { LiveCursors } from './live-cursors'
+import { PresenceAvatars } from './presence-avatars'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { useTemplateImport } from '@/hooks/use-template-import'
 
@@ -27,6 +29,23 @@ export function CanvasFlow() {
   const { screenToFlowPosition } = useReactFlow()
   const undo = useUndo()
   const redo = useRedo()
+  const updateMyPresence = useUpdateMyPresence()
+
+  /* ── Cursor broadcasting ───────────────────────────────────────── */
+  const onPointerMove = useCallback(
+    (event: React.PointerEvent) => {
+      const flowPos = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      })
+      updateMyPresence({ cursor: flowPos })
+    },
+    [screenToFlowPosition, updateMyPresence]
+  )
+
+  const onPointerLeave = useCallback(() => {
+    updateMyPresence({ cursor: null })
+  }, [updateMyPresence])
 
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } = useLiveblocksFlow<canvasNode, canvasEdge>({
     nodes: { initial: [] },
@@ -115,6 +134,8 @@ export function CanvasFlow() {
         defaultEdgeOptions={{ type: 'custom' }}
         onDragOver={onDragOver}
         onDrop={onDrop}
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
         deleteKeyCode={['Backspace', 'Delete']}
@@ -122,7 +143,11 @@ export function CanvasFlow() {
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />
+        <LiveCursors />
       </ReactFlow>
+
+      {/* Presence avatars — top-right overlay */}
+      <PresenceAvatars />
 
       <CanvasControls />
 
