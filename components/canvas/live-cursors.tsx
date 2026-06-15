@@ -72,7 +72,7 @@ function Cursor({
 
       {/* Name badge */}
       <div
-        className="absolute left-4 top-5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold text-white shadow-lg"
+        className="absolute left-4 top-5 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold text-black shadow-lg"
         style={{ backgroundColor: color }}
       >
         {name}
