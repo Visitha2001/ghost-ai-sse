@@ -77,7 +77,7 @@ function CollaboratorAvatar({
         />
       ) : (
         <div
-          className="flex h-full w-full items-center justify-center rounded-full text-[11px] font-bold text-white"
+          className="flex h-full w-full items-center justify-center rounded-full text-[11px] font-bold text-black"
           style={{ backgroundColor: color }}
         >
           {initials}
