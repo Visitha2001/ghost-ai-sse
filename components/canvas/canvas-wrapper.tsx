@@ -9,7 +9,7 @@ import { Loader2, AlertTriangle } from "lucide-react"
 
 export function CanvasWrapper({ roomId }: { roomId: string }) {
   return (
-    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
+    <LiveblocksProvider authEndpoint="/api/liveblocks-auth" badgeLocation="bottom-left">
       <ErrorBoundary fallback={
         <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
           <AlertTriangle className="h-8 w-8 text-destructive/80" />
