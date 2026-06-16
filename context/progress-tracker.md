@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Feature `19-presense-avatar-cursor.md` implemented. Ready for next feature.
+- Feature `20-ai-sidebar-shell.md` implemented. Ready for next feature.
 
 ## Completed
 
@@ -29,6 +29,7 @@ Update this file whenever the current phase, active feature, or implementation s
 - `17-canvas-ergonomics.md`: Added a pill-shaped `CanvasControls` bar at the bottom-left of the canvas featuring Zoom controls (zoom out, fit view, zoom in) using the React Flow instance and history controls (undo, redo) hooked into Liveblocks. Created `useKeyboardShortcuts` hook mapping keyboard inputs (+/= for zoom in, - for zoom out, Cmd/Ctrl+Z for undo, Cmd/Ctrl+Shift+Z or Cmd/Ctrl+Y for redo) bypassing editable fields. Removed the minimap.
 - `18-starter-template.md`: Added a starter template library with three curated system design templates (Microservices Architecture, CI/CD Pipeline, Event-Driven System). Created `starter-templates.ts` with `CanvasTemplate` type and `CANVAS_TEMPLATES` array, and `starter-templates-modal.tsx` with SVG diagram previews rendered from node/edge data without a React Flow instance. Added a "Templates" button to the editor navbar. Template import clears the existing canvas and loads template nodes/edges through Liveblocks, then fits the view. Used a Zustand store (`useTemplateImport`) to bridge the navbar-to-canvas signal without prop-drilling.
 - `19-presense-avatar-cursor.md`: Added presence avatars and live cursors to the editor canvas view. Created `PresenceAvatars` component (top-right overlay with collaborator avatar stack, +N overflow chip, divider, and Clerk UserButton), `LiveCursors` component (colored pointer arrows with name badges rendered via `flowToScreenPosition`). Updated `CanvasFlow` to broadcast cursor position via `useUpdateMyPresence` on pointer move/leave events. Collaborators are excluded from the current user's avatar; the current user is represented by the Clerk `UserButton`. Editor home navbar remains unchanged.
+- `20-ai-sidebar-shell.md`: Separated the AI sidebar into its own component (`AiSidebar`). Implemented the AI Architect tab with an empty state and input UI, and the Specs tab with a demo spec card. Maintained existing layout floating behavior.
 
 ## In Progress
 

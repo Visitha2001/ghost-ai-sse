@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { useParams } from "next/navigation"
-import { Sparkles, Bot, X } from "lucide-react"
 import { EditorNavbar } from "@/components/editor/editor-navbar"
 import { ProjectSidebar } from "@/components/editor/project-sidebar"
+import { AiSidebar } from "@/components/ai/ai-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
 import { useProjectDialogs, Project } from "@/hooks/use-project-dialogs"
 import { Button } from "@/components/ui/button"
@@ -77,39 +77,10 @@ export function EditorLayoutShell({ children, ownedProjects, sharedProjects }: E
 
         {/* Right Collapsible AI Architect Sidebar */}
         {activeProject && (
-          <aside className={cn(
-            "h-[calc(100%-2rem)] bg-card/85 backdrop-blur-md flex flex-col shrink-0 z-30 transition-all duration-300 ease-in-out rounded-2xl overflow-hidden shadow-2xl relative",
-            isAiSidebarOpen 
-              ? "w-80 opacity-100 translate-x-0 my-4 mr-4 border border-border/80" 
-              : "w-0 opacity-0 translate-x-12 my-4 mr-0 border-0 pointer-events-none"
-          )}>
-            {/* AI Sidebar Header */}
-            <div className="h-14 flex items-center justify-between px-4 border-b border-border shrink-0 select-none">
-              <h3 className="font-semibold text-sm flex items-center gap-2 text-foreground">
-                <Sparkles className="h-4 w-4 text-ai-text" />
-                AI Architect
-              </h3>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setIsAiSidebarOpen(false)}
-                className="h-8 w-8 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* AI Sidebar Placeholder Body */}
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center select-none">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ai/10 border border-ai/20 mb-6">
-                <Bot className="h-8 w-8 text-ai-text" />
-              </div>
-              <p className="text-sm font-semibold text-foreground mb-2">AI Design Assistant</p>
-              <p className="text-xs text-muted-foreground max-w-[220px] leading-relaxed">
-                Describe your desired architecture. AI will generate nodes, edges, and technical specifications directly inside your workspace.
-              </p>
-            </div>
-          </aside>
+          <AiSidebar 
+            isOpen={isAiSidebarOpen} 
+            onClose={() => setIsAiSidebarOpen(false)} 
+          />
         )}
       </div>
 
