@@ -93,7 +93,7 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                 Can you build a chat app architecture?
               </div>
               <div className="self-start max-w-[85%] rounded-2xl rounded-tl-sm bg-elevated border border-surface-border text-brand p-3 text-sm">
-                Sure, I'm setting up the canvas now with a React frontend, Node backend, and Redis cache.
+                Sure, I&apos;m setting up the canvas now with a React frontend, Node backend, and Redis cache.
               </div>
             </div>
           </div>

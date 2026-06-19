@@ -16,6 +16,8 @@ import { LiveCursors } from './live-cursors'
 import { PresenceAvatars } from './presence-avatars'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { useTemplateImport } from '@/hooks/use-template-import'
+import { useParams } from 'next/navigation'
+import { useCanvasAutosave } from '@/hooks/use-canvas-autosave'
 
 const nodeTypes = {
   custom: CanvasNode
@@ -52,6 +54,42 @@ export function CanvasFlow() {
     edges: { initial: [] },
     suspense: true
   })
+
+  const params = useParams()
+  const roomId = params?.roomId as string
+  
+  useCanvasAutosave(roomId)
+
+  // Initial load from Vercel Blob if canvas is empty
+  useEffect(() => {
+    let mounted = true
+    async function loadSavedCanvas() {
+      if (!roomId || nodes.length > 0 || edges.length > 0) return
+      
+      try {
+        const res = await fetch(`/api/projects/${roomId}/canvas`)
+        if (!res.ok) return
+        
+        const data = await res.json()
+        if (!mounted) return
+        
+        if (data.nodes && data.nodes.length > 0) {
+          onNodesChange(data.nodes.map((n: canvasNode) => ({ type: 'add', item: n })))
+        }
+        if (data.edges && data.edges.length > 0) {
+          onEdgesChange(data.edges.map((e: canvasEdge) => ({ type: 'add', item: e })))
+        }
+      } catch (err) {
+        console.error('Failed to load saved canvas', err)
+      }
+    }
+    
+    // We only want to run this once on mount, but checking nodes.length helps avoid overwriting
+    loadSavedCanvas()
+    
+    return () => { mounted = false }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomId])
 
   useKeyboardShortcuts({ undo, redo })
 
