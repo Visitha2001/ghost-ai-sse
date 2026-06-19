@@ -1,5 +1,5 @@
 import * as React from "react"
-import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home, LayoutTemplate } from "lucide-react"
+import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home, LayoutTemplate, Cloud, CloudUpload, CloudAlert } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { UserButton } from "@clerk/nextjs"
 import { cn, formatProjectName } from "@/lib/utils"
@@ -8,6 +8,7 @@ import { useParams } from "next/navigation"
 import { useProjectDialogs } from "@/hooks/use-project-dialogs"
 import { useTemplateImport } from "@/hooks/use-template-import"
 import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal"
+import { useCanvasAutosaveStore } from "@/hooks/use-canvas-autosave-store"
 
 interface EditorNavbarProps {
   isSidebarOpen: boolean
@@ -33,6 +34,7 @@ export function EditorNavbar({
   const storeShared = useProjectDialogs((state) => state.sharedProjects)
   const requestImport = useTemplateImport((s) => s.requestImport)
   const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false)
+  const saveStatus = useCanvasAutosaveStore((state) => state.status)
 
   const activeProject = React.useMemo(() => {
     if (!roomId) return undefined
@@ -71,6 +73,11 @@ export function EditorNavbar({
             <span className="h-5 w-[1px] bg-gradient-to-b from-transparent via-border to-transparent mx-1.5" />
             <span className="font-semibold text-sm text-foreground select-none truncate max-w-[240px] tracking-tight">
               {formatProjectName(projectName)}
+            </span>
+            <span className="ml-2 flex items-center text-muted-foreground">
+              {saveStatus === 'saving' && <CloudUpload className="h-4 w-4 animate-pulse text-brand" />}
+              {saveStatus === 'saved' && <Cloud className="h-4 w-4 text-muted-foreground/50" />}
+              {saveStatus === 'error' && <CloudAlert className="h-4 w-4 text-destructive" />}
             </span>
           </>
         )}

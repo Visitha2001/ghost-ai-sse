@@ -1,5 +1,5 @@
 import { useNodes, useEdges, useReactFlow } from '@xyflow/react'
-import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight, Trash2, Spline, CornerDownRight } from 'lucide-react'
+import { RotateCw, ArrowRight, Minus, MoreHorizontal, ArrowLeft, ArrowLeftRight, Trash2 } from 'lucide-react'
 import { canvasNode, canvasEdge, NODE_COLORS } from '@/types/canvas'
 
 const EDGE_COLORS = [

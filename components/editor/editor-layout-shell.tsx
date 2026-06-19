@@ -7,7 +7,6 @@ import { ProjectSidebar } from "@/components/editor/project-sidebar"
 import { AiSidebar } from "@/components/ai/ai-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
 import { useProjectDialogs, Project } from "@/hooks/use-project-dialogs"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface EditorLayoutShellProps {
