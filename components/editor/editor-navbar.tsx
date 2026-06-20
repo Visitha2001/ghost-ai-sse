@@ -1,5 +1,5 @@
 import * as React from "react"
-import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home, LayoutTemplate, Cloud, CloudUpload, CloudAlert } from "lucide-react"
+import { PanelLeftClose, PanelLeftOpen, Share2, Sparkles, Home, LayoutTemplate, Cloud, CloudUpload, CloudAlert, Save, Loader2, Check } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { UserButton } from "@clerk/nextjs"
 import { cn, formatProjectName } from "@/lib/utils"
@@ -35,6 +35,7 @@ export function EditorNavbar({
   const requestImport = useTemplateImport((s) => s.requestImport)
   const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false)
   const saveStatus = useCanvasAutosaveStore((state) => state.status)
+  const triggerSave = useCanvasAutosaveStore((state) => state.triggerSave)
 
   const activeProject = React.useMemo(() => {
     if (!roomId) return undefined
@@ -96,6 +97,28 @@ export function EditorNavbar({
             >
               <LayoutTemplate className="h-4 w-4" />
               Templates
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => triggerSave?.()}
+              disabled={saveStatus === 'saving' || !triggerSave}
+              className={cn(
+                "rounded-xl h-9 px-3.5 gap-2 text-xs font-medium transition-all duration-300 disabled:cursor-not-allowed",
+                saveStatus === 'saved'
+                  ? "border-[var(--state-success)]/40 bg-[var(--state-success)]/10 text-[var(--state-success)] hover:bg-[var(--state-success)]/15"
+                  : "border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border disabled:opacity-50"
+              )}
+              aria-label="Save canvas"
+            >
+              {saveStatus === 'saving' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : saveStatus === 'saved' ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? 'Saved' : 'Save'}
             </Button>
             <Button
               variant="outline"
