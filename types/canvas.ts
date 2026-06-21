@@ -35,6 +35,7 @@ export type CanvasEdgeData = {
   arrow?: 'none' | 'forward' | 'backward' | 'both'
   path?: 'bezier' | 'straight' | 'step'
   label?: string
+  labelOffset?: number  // 0–1 parametric offset along the edge path; default 0.5 (midpoint)
 }
 
 export type canvasNode = Node<CanvasNodeData>

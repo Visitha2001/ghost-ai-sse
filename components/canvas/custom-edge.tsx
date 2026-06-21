@@ -11,7 +11,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { canvasEdge } from '@/types/canvas';
-import { Spline, Minus, CornerDownRight } from 'lucide-react';
+import { Spline, Minus, CornerDownRight, GripHorizontal } from 'lucide-react';
 import { useEdgeLabelEdit } from '@/hooks/use-edge-label-edit';
 
 const COLORS = [
@@ -43,15 +43,15 @@ export function CustomEdge({
   const pathParams = { sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition };
 
   let edgePath = '';
-  let labelX   = 0;
-  let labelY   = 0;
+  let defaultLabelX = 0;
+  let defaultLabelY = 0;
 
   if (pathType === 'straight') {
-    [edgePath, labelX, labelY] = getStraightPath(pathParams);
+    [edgePath, defaultLabelX, defaultLabelY] = getStraightPath(pathParams);
   } else if (pathType === 'step') {
-    [edgePath, labelX, labelY] = getSmoothStepPath(pathParams);
+    [edgePath, defaultLabelX, defaultLabelY] = getSmoothStepPath(pathParams);
   } else {
-    [edgePath, labelX, labelY] = getBezierPath(pathParams);
+    [edgePath, defaultLabelX, defaultLabelY] = getBezierPath(pathParams);
   }
 
   const { updateEdgeData } = useReactFlow();
@@ -77,17 +77,12 @@ export function CustomEdge({
   const [draft, setDraft] = useState(currentLabel);
   const inputRef          = useRef<HTMLInputElement>(null);
 
-  // Sync draft when edit mode opens for this edge
   useEffect(() => {
-    if (editing) {
-      setDraft(data?.label || '');
-    }
+    if (editing) setDraft(data?.label || '');
   }, [editing, data?.label]);
 
-  // Auto-focus the input when edit mode opens
   useEffect(() => {
     if (editing && inputRef.current) {
-      // Small timeout so React has painted the input
       const t = setTimeout(() => {
         inputRef.current?.focus();
         inputRef.current?.select();
@@ -110,12 +105,90 @@ export function CustomEdge({
       e.preventDefault();
       commitLabel();
     }
-    if (e.key === 'Escape') {
-      cancelEdit();
-    }
-    // Prevent delete key from removing the edge while typing
+    if (e.key === 'Escape') cancelEdit();
     e.stopPropagation();
   }, [commitLabel, cancelEdit]);
+
+  /* ── Draggable Label Logic ────────────── */
+  const pathRef = useRef<SVGPathElement>(null);
+  const savedOffset = data?.labelOffset ?? 0.5;
+  const [dragOffset, setDragOffset] = useState<number | null>(null);
+  
+  const currentOffset = dragOffset !== null ? dragOffset : savedOffset;
+  
+  // Compute true label position from offset along path
+  let labelX = defaultLabelX;
+  let labelY = defaultLabelY;
+  
+  // We need to use a layout effect or state to get the point, but we can do it during render if the ref exists.
+  // Since ref won't trigger re-render on initial mount, we default to the React Flow center, 
+  // but we force an update once on mount to get accurate position.
+  const [, forceRender] = useState(0);
+  useEffect(() => forceRender(1), []);
+
+  if (pathRef.current) {
+    try {
+      const length = pathRef.current.getTotalLength();
+      if (length > 0) {
+        const point = pathRef.current.getPointAtLength(length * currentOffset);
+        labelX = point.x;
+        labelY = point.y;
+      }
+    } catch (e) {
+      // SVG not ready
+    }
+  }
+
+  const onLabelPointerDown = useCallback((e: React.PointerEvent) => {
+    e.stopPropagation();
+    if (!pathRef.current) return;
+    
+    const svgEl = pathRef.current.closest('svg');
+    if (!svgEl) return;
+
+    const pathEl = pathRef.current;
+    const length = pathEl.getTotalLength();
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      // Map mouse to SVG coords
+      const pt = svgEl.createSVGPoint();
+      pt.x = moveEvent.clientX;
+      pt.y = moveEvent.clientY;
+      const svgP = pt.matrixTransform(svgEl.getScreenCTM()?.inverse());
+      if (!svgP) return;
+
+      // Sample path to find closest fraction
+      let closestOffset = 0.5;
+      let minDistance = Infinity;
+      const samples = 100;
+      
+      for (let i = 0; i <= samples; i++) {
+        const t = i / samples;
+        const p = pathEl.getPointAtLength(t * length);
+        const dist = Math.hypot(p.x - svgP.x, p.y - svgP.y);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestOffset = t;
+        }
+      }
+      setDragOffset(closestOffset);
+    };
+
+    const onPointerUp = () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      
+      setDragOffset((finalOffset) => {
+        if (finalOffset !== null) {
+          updateEdgeData(id, { labelOffset: finalOffset });
+        }
+        return null;
+      });
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+  }, [id, updateEdgeData]);
 
   return (
     <>
@@ -133,6 +206,9 @@ export function CustomEdge({
         </marker>
       </defs>
 
+      {/* Hidden path used for geometry calculations */}
+      <path ref={pathRef} d={edgePath} fill="none" stroke="none" />
+
       <BaseEdge
         path={edgePath}
         markerStart={showStart ? `url(#arrow-${id})` : markerStart}
@@ -146,13 +222,12 @@ export function CustomEdge({
       />
 
       <EdgeLabelRenderer>
-        {/* ── Path-style toolbar — floats ABOVE the line midpoint ── */}
+        {/* ── Path-style toolbar — floats ABOVE the midpoint ── */}
         {selected && (
           <div
             style={{
               position: 'absolute',
-              // Float 40px above the midpoint of the line
-              transform: `translate(-50%, -100%) translate(${labelX}px, ${labelY - 18}px)`,
+              transform: `translate(-50%, -100%) translate(${defaultLabelX}px, ${defaultLabelY - 18}px)`,
               pointerEvents: 'all',
             }}
             className="nodrag nopan flex items-center gap-1 px-1.5 py-1 bg-[#111114]/90 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl z-50 text-foreground"
@@ -181,15 +256,25 @@ export function CustomEdge({
           </div>
         )}
 
-        {/* ── Label pill / inline editor — sits ON the midpoint ── */}
+        {/* ── Label pill / inline editor — sits ON the interpolated point ── */}
         <div
           style={{
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
             pointerEvents: 'all',
           }}
-          className="nodrag nopan"
+          className="nodrag nopan flex items-center gap-1"
         >
+          {selected && currentLabel && !editing && (
+            <button
+              onPointerDown={onLabelPointerDown}
+              className="p-1 -ml-6 bg-[#111114] border border-[#2a2a30] rounded-full text-muted-foreground hover:text-foreground shadow cursor-grab active:cursor-grabbing transition-colors"
+              title="Drag to reposition label"
+            >
+              <GripHorizontal className="w-3 h-3" />
+            </button>
+          )}
+
           {editing ? (
             <input
               ref={inputRef}
@@ -214,7 +299,6 @@ export function CustomEdge({
               ].join(' ')}
             />
           ) : currentLabel ? (
-            /* Static label pill — double-click to edit */
             <span
               className={[
                 'inline-block px-3 py-0.5 text-xs font-medium rounded-full select-none',
