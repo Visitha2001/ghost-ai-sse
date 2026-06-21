@@ -92,7 +92,7 @@ export function CanvasFlow() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId])
 
-  useKeyboardShortcuts({ undo, redo })
+  useKeyboardShortcuts({ undo, redo, onNodesChange, onEdgesChange })
 
   /* ── Edge label double-click ───────────────────────────────────── */
   const setEditingEdgeId = useEdgeLabelEdit((s) => s.setEditingEdgeId)
@@ -189,6 +189,8 @@ export function CanvasFlow() {
         colorMode="dark"
         deleteKeyCode={['Backspace', 'Delete']}
         proOptions={{ hideAttribution: true }}
+        selectionOnDrag
+        panOnDrag={[1, 2]}
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />
