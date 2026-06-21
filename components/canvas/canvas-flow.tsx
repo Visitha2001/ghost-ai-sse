@@ -18,6 +18,7 @@ import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { useTemplateImport } from '@/hooks/use-template-import'
 import { useParams } from 'next/navigation'
 import { useCanvasAutosave } from '@/hooks/use-canvas-autosave'
+import { useEdgeLabelEdit } from '@/hooks/use-edge-label-edit'
 
 const nodeTypes = {
   custom: CanvasNode
@@ -92,6 +93,15 @@ export function CanvasFlow() {
   }, [roomId])
 
   useKeyboardShortcuts({ undo, redo })
+
+  /* ── Edge label double-click ───────────────────────────────────── */
+  const setEditingEdgeId = useEdgeLabelEdit((s) => s.setEditingEdgeId)
+  const onEdgeDoubleClick = useCallback(
+    (_: React.MouseEvent, edge: canvasEdge) => {
+      setEditingEdgeId(edge.id)
+    },
+    [setEditingEdgeId]
+  )
 
   /* ── Template import handler ───────────────────────────────────── */
   const pendingTemplate = useTemplateImport((s) => s.pendingTemplate)
@@ -174,6 +184,7 @@ export function CanvasFlow() {
         onDrop={onDrop}
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
+        onEdgeDoubleClick={onEdgeDoubleClick}
         connectionMode={ConnectionMode.Loose}
         colorMode="dark"
         deleteKeyCode={['Backspace', 'Delete']}
