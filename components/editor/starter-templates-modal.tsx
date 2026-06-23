@@ -251,8 +251,8 @@ export function StarterTemplatesModal({
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 min-h-0 px-6 pb-6">
-          <div className="grid grid-cols-3 gap-4 pt-2">
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 pb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">
             {CANVAS_TEMPLATES.map((template) => (
               <div
                 key={template.id}
@@ -285,7 +285,7 @@ export function StarterTemplatesModal({
               </div>
             ))}
           </div>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   )

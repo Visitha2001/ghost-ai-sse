@@ -202,8 +202,8 @@ export function CanvasFlow() {
 
       <CanvasControls />
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 z-10 transition-all duration-300 pointer-events-none">
-        <div className="pointer-events-auto flex items-center gap-4">
+      <div className="absolute bottom-12 sm:bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center w-[95vw] sm:w-auto gap-2 sm:gap-4 z-50 transition-all duration-300 pointer-events-none">
+        <div className="pointer-events-auto flex flex-wrap sm:flex-nowrap justify-center items-center gap-2 sm:gap-4">
           <ShapePanel />
           <MoreShapesPanel />
           <PropertiesPanel onDelete={onDelete} />

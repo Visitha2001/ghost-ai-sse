@@ -72,7 +72,7 @@ export function EditorNavbar({
         {projectName && (
           <>
             <span className="h-5 w-[1px] bg-gradient-to-b from-transparent via-border to-transparent mx-1.5" />
-            <span className="font-semibold text-sm text-foreground select-none truncate max-w-[240px] tracking-tight">
+            <span className="hidden sm:inline-block font-semibold text-sm text-foreground select-none truncate max-w-[120px] md:max-w-[240px] tracking-tight">
               {formatProjectName(projectName)}
             </span>
             <span className="ml-2 flex items-center text-muted-foreground">
@@ -92,11 +92,11 @@ export function EditorNavbar({
               variant="outline"
               size="sm"
               onClick={() => setIsTemplateModalOpen(true)}
-              className="rounded-xl h-9 px-3.5 gap-2 border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border text-xs font-medium transition-all duration-200"
+              className="rounded-xl h-9 px-2 sm:px-3.5 gap-2 border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border text-xs font-medium transition-all duration-200"
               aria-label="Open starter templates"
             >
-              <LayoutTemplate className="h-4 w-4" />
-              Templates
+              <LayoutTemplate className="h-4 w-4 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Templates</span>
             </Button>
             <Button
               variant="outline"
@@ -104,7 +104,7 @@ export function EditorNavbar({
               onClick={() => triggerSave?.()}
               disabled={saveStatus === 'saving' || !triggerSave}
               className={cn(
-                "rounded-xl h-9 px-3.5 gap-2 text-xs font-medium transition-all duration-300 disabled:cursor-not-allowed",
+                "rounded-xl h-9 px-2 sm:px-3.5 gap-2 text-xs font-medium transition-all duration-300 disabled:cursor-not-allowed",
                 saveStatus === 'saved'
                   ? "border-[var(--state-success)]/40 bg-[var(--state-success)]/10 text-[var(--state-success)] hover:bg-[var(--state-success)]/15"
                   : "border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border disabled:opacity-50"
@@ -118,23 +118,25 @@ export function EditorNavbar({
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? 'Saved' : 'Save'}
+              <span className="hidden sm:inline">
+                {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? 'Saved' : 'Save'}
+              </span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => activeProject && openDialog("share", activeProject)}
-              className="rounded-xl h-9 px-3.5 gap-2 border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border text-xs font-medium transition-all duration-200"
+              className="rounded-xl h-9 px-2 sm:px-3.5 gap-2 border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border text-xs font-medium transition-all duration-200"
             >
               <Share2 className="h-4 w-4" />
-              Share
+              <span className="hidden sm:inline">Share</span>
             </Button>
             <Button
               variant={isAiSidebarOpen ? "default" : "outline"}
               size="sm"
               onClick={onToggleAiSidebar}
               className={cn(
-                "rounded-xl h-9 px-3.5 gap-2 text-xs font-bold transition-all duration-200 select-none",
+                "rounded-xl h-9 px-2 sm:px-3.5 gap-2 text-xs font-bold transition-all duration-200 select-none",
                 isAiSidebarOpen
                   ? "bg-brand text-background hover:bg-brand/90 border-transparent font-semibold shadow-[0_0_12px_rgba(0,200,212,0.2)]"
                   : "border-border/60 bg-white/[0.03] text-muted-foreground hover:text-foreground hover:bg-white/[0.06] hover:border-border"
@@ -142,7 +144,7 @@ export function EditorNavbar({
               aria-label="Toggle AI assistant"
             >
               <Sparkles className="h-4 w-4" />
-              AI Chat
+              <span className="hidden sm:inline">AI Chat</span>
             </Button>
             <span className="h-5 w-[1px] bg-gradient-to-b from-transparent via-border to-transparent mx-1" />
           </>

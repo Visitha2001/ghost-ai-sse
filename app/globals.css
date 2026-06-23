@@ -120,3 +120,10 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+
+/* Push Liveblocks watermark to the bottom layer */
+[data-liveblocks-badge], 
+[class*="liveblocks-badge"],
+a[href*="liveblocks"] {
+  z-index: 0 !important;
+}
