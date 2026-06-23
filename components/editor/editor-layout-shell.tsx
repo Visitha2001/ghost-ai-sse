@@ -44,6 +44,14 @@ export function EditorLayoutShell({ children, ownedProjects, sharedProjects }: E
     }
   }, [activeProject])
 
+  // Initialize sidebars as closed on mobile to prevent canvas obscuring
+  React.useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false)
+      setIsAiSidebarOpen(false)
+    }
+  }, [])
+
   return (
     <div className="flex h-screen w-full flex-col bg-background overflow-hidden">
       {/* Top Navigation Bar */}

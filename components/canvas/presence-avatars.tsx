@@ -12,7 +12,7 @@ export function PresenceAvatars() {
   const overflowCount = others.length - MAX_VISIBLE
 
   return (
-    <div className="absolute top-4 right-4 z-30 flex items-center gap-0">
+    <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-30 flex items-center gap-0">
       {/* Collaborator avatar stack */}
       {others.length > 0 && (
         <>

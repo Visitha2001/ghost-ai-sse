@@ -43,7 +43,10 @@ export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
     return (
       <div 
         key={project.id} 
-        onClick={() => router.push(`/editor/${project.id}`)}
+        onClick={() => {
+          router.push(`/editor/${project.id}`);
+          if (window.innerWidth < 768) onClose();
+        }}
         className={cn(
           "flex items-center justify-between p-2 rounded-md transition-colors group text-sm cursor-pointer select-none",
           isActive ? "bg-muted text-foreground font-medium" : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
@@ -97,7 +100,7 @@ export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
       )}
       <aside
         className={cn(
-          "fixed top-[5.75rem] bottom-4 left-4 h-[calc(100vh-6.75rem)] w-64 bg-card/85 backdrop-blur-md border border-border/80 shadow-2xl z-50 flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ease-in-out",
+          "fixed top-[5.75rem] bottom-4 left-4 h-[calc(100vh-6.75rem)] w-[85vw] sm:w-64 bg-card/85 backdrop-blur-md border border-border/80 shadow-2xl z-50 flex flex-col rounded-2xl overflow-hidden transition-all duration-300 ease-in-out",
           isOpen ? "translate-x-0 opacity-100" : "-translate-x-[calc(100%+1.5rem)] opacity-0 pointer-events-none"
         )}
       >

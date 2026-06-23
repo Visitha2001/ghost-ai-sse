@@ -13,7 +13,7 @@ export function CanvasControls() {
   const canRedo = useCanRedo()
 
   return (
-    <div className="absolute bottom-10 left-10 flex items-center gap-2 z-10 bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-full p-2 pointer-events-auto">
+    <div className="absolute top-4 sm:top-auto bottom-auto sm:bottom-10 left-4 sm:left-10 flex items-center gap-2 z-10 bg-background/40 backdrop-blur-xl border border-white/10 shadow-2xl rounded-full p-2 pointer-events-auto">
       <div className="flex items-center gap-1">
         <Button variant="ghost" size="icon" onClick={() => zoomOut({ duration: 200 })} className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground">
           <ZoomOut className="h-4 w-4" />

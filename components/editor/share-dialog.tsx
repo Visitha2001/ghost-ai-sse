@@ -151,7 +151,7 @@ export function ShareDialog() {
 
   return (
     <Dialog open={isOpen && type === "share"} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-fit p-6 gap-6 rounded-3xl bg-popover border border-border shadow-2xl backdrop-blur-xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="flex flex-col w-[95vw] sm:w-full sm:max-w-lg p-4 sm:p-6 gap-4 sm:gap-6 rounded-3xl bg-popover border border-border shadow-2xl backdrop-blur-xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold tracking-tight text-foreground">Share Project</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground mt-1">
@@ -196,7 +196,7 @@ export function ShareDialog() {
               Invite Collaborator
             </Label>
             <div className="flex items-center gap-2">
-              <div className="relative flex-1">
+              <div className="relative flex-1 min-w-0">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="invite-email"
@@ -211,7 +211,7 @@ export function ShareDialog() {
               <Button 
                 type="submit" 
                 disabled={inviting || !email.trim()}
-                className="rounded-xl h-10 px-4 gap-2 bg-brand text-background hover:bg-brand/90 font-semibold text-sm transition-all"
+                className="rounded-xl h-10 px-4 gap-2 bg-brand text-background hover:bg-brand/90 font-semibold text-sm shrink-0 transition-all"
               >
                 {inviting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

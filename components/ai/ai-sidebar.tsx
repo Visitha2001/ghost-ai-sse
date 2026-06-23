@@ -16,14 +16,21 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
   const [input, setInput] = React.useState("")
 
   return (
-    <aside
-      className={cn(
-        "h-[calc(100%-2rem)] bg-card/85 backdrop-blur-md flex flex-col shrink-0 z-30 transition-all duration-300 ease-in-out rounded-2xl overflow-hidden shadow-2xl relative",
-        isOpen
-          ? "w-80 opacity-100 translate-x-0 my-4 mr-4 border border-border/80"
-          : "w-0 opacity-0 translate-x-12 my-4 mr-0 border-0 pointer-events-none"
+    <>
+      {isOpen && (
+        <div 
+          className="fixed inset-0 top-[4.75rem] bg-background/80 backdrop-blur-sm z-40 sm:hidden" 
+          onClick={onClose}
+        />
       )}
-    >
+      <aside
+        className={cn(
+          "fixed sm:relative top-[5.75rem] sm:top-auto bottom-4 sm:bottom-auto right-4 sm:right-auto h-[calc(100vh-6.75rem)] sm:h-[calc(100%-2rem)] bg-card/85 backdrop-blur-md flex flex-col shrink-0 z-50 sm:z-30 transition-all duration-300 ease-in-out rounded-2xl overflow-hidden shadow-2xl",
+          isOpen
+            ? "w-[85vw] sm:w-80 opacity-100 translate-x-0 sm:my-4 sm:mr-4 border border-border/80"
+            : "w-[85vw] sm:w-0 opacity-0 translate-x-[calc(100%+1.5rem)] sm:translate-x-12 sm:my-4 sm:mr-0 border-0 pointer-events-none"
+        )}
+      >
       {/* Header */}
       <div className="h-14 flex items-center justify-between px-4 border-b border-border shrink-0 select-none">
         <div className="flex items-center gap-3">
@@ -155,5 +162,6 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
         </TabsContent>
       </Tabs>
     </aside>
+    </>
   )
 }
