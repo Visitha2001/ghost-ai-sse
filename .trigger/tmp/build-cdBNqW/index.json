@@ -1,0 +1,29 @@
+{
+  "configPath": "D:\\ghost-ai-sse\\.trigger\\tmp\\build-cdBNqW\\trigger.config.mjs",
+  "customConditions": [
+  ],
+  "prompts": [
+  ],
+  "queues": [
+  ],
+  "runtime": "node",
+  "runtimeVersion": "22.13.0",
+  "tasks": [
+    {
+      "entryPoint": "D:\\ghost-ai-sse\\.trigger\\tmp\\build-cdBNqW\\example.mjs",
+      "filePath": "trigger/example.ts",
+      "id": "my-first-task",
+      "maxDuration": 300,
+      "retry": {
+        "factor": 2,
+        "maxAttempts": 3,
+        "maxTimeoutInMs": 10000,
+        "minTimeoutInMs": 1000
+      }
+    }
+  ],
+  "timings": {
+    "trigger/example.ts": 2.935799999999972
+  },
+  "workerEntryPoint": "D:\\ghost-ai-sse\\.trigger\\tmp\\build-cdBNqW\\dev-run-worker.mjs"
+}

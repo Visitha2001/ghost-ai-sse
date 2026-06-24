@@ -3,11 +3,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Getting Started
 
 ### Clerk Skills install
+
 ```bash
-    npm run skills add clerk/skills 
+    npm run skills add clerk/skills
 ```
 
 then select the following options:
+
 - clerk
 - clerk-backend-api
 - clerk-custom-ui
@@ -19,9 +21,10 @@ then select the following options:
 1. read context/feature-specs to know what to build next
 2. read progresstracker.md to know the current phase
 3. update progresstracker.md after each phase implementation
-4. then implement new features.  
+4. then implement new features.
 
-### Prisma setup: 
+### Prisma setup:
+
 ```bash
 npm install prisma tsx @types/pg --save-dev
 npm install @prisma/client @prisma/adapter-pg pg dotenv
@@ -29,13 +32,35 @@ npx prisma init --output ../app/generated/prisma
 ```
 
 install prisma skills
+
 ```bash
 npx skills add prisma/skills
 ```
 
 select all options and confirm with "y" or by pressing enter key.
+
 - use project
 - use symlink (Recommended)
+
+install trigger dev:
+
+```bash
+    npx trigger.dev@latest init -p proj_zgtiuvufkwqhaiinsvyz
+```
+
+install these agent skills too:
+
+- trigger dev -
+
+```bash
+    npx skills add triggerdotdev/skills
+```
+
+- liveblocks -
+
+````bash
+    npx skills add liveblocks/skills
+```
 
 First, run the development server:
 
@@ -47,7 +72,7 @@ yarn dev
 pnpm dev
 # or
 bun dev
-```
+````
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
