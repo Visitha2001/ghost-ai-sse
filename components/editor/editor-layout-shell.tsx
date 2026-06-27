@@ -8,6 +8,7 @@ import { AiSidebar } from "@/components/ai/ai-sidebar"
 import { ProjectDialogs } from "@/components/editor/project-dialogs"
 import { useProjectDialogs, Project } from "@/hooks/use-project-dialogs"
 import { cn } from "@/lib/utils"
+import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react"
 
 interface EditorLayoutShellProps {
   children: React.ReactNode;
@@ -83,11 +84,23 @@ export function EditorLayoutShell({ children, ownedProjects, sharedProjects }: E
         </main>
 
         {/* Right Collapsible AI Architect Sidebar */}
-        {activeProject && (
-          <AiSidebar 
-            isOpen={isAiSidebarOpen} 
-            onClose={() => setIsAiSidebarOpen(false)} 
-          />
+        {activeProject && roomId && (
+          <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
+            <RoomProvider
+              id={roomId}
+              initialPresence={{
+                cursor: null,
+                thinking: false,
+              }}
+            >
+              <ClientSideSuspense fallback={null}>
+                <AiSidebar 
+                  isOpen={isAiSidebarOpen} 
+                  onClose={() => setIsAiSidebarOpen(false)} 
+                />
+              </ClientSideSuspense>
+            </RoomProvider>
+          </LiveblocksProvider>
         )}
       </div>
 

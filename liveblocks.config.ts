@@ -1,4 +1,4 @@
-import { AiStatusFeedPayload } from "./types/tasks";
+import { AiStatusFeedPayload, AiChatFeedPayload } from "./types/tasks";
 
 declare global {
   interface Liveblocks {
@@ -14,10 +14,9 @@ declare global {
         color: string;
       };
     };
-    RoomEvent: {
-      type: "ai-status-feed";
-      payload: AiStatusFeedPayload;
-    };
+    RoomEvent: 
+      | { type: "ai-status-feed"; payload: AiStatusFeedPayload }
+      | { type: "ai-chat"; payload: AiChatFeedPayload };
   }
 }
 

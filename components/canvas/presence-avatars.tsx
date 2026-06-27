@@ -1,20 +1,33 @@
 "use client"
 
-import { useOthers } from "@liveblocks/react/suspense"
+import { useOthers, useSelf } from "@liveblocks/react/suspense"
 import { UserButton } from "@clerk/nextjs"
 
 const MAX_VISIBLE = 5
 
 export function PresenceAvatars() {
-  const others = useOthers()
+  const self = useSelf()
+  const allOthers = useOthers()
 
-  const visibleOthers = others.slice(0, MAX_VISIBLE)
-  const overflowCount = others.length - MAX_VISIBLE
+  // Filter out other connections from the same user and deduplicate
+  const uniqueOthers = []
+  const seenIds = new Set()
+
+  for (const other of allOthers) {
+    if (other.id === self.id) continue
+    if (!seenIds.has(other.id)) {
+      seenIds.add(other.id)
+      uniqueOthers.push(other)
+    }
+  }
+
+  const visibleOthers = uniqueOthers.slice(0, MAX_VISIBLE)
+  const overflowCount = uniqueOthers.length - MAX_VISIBLE
 
   return (
     <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-30 flex items-center gap-0">
       {/* Collaborator avatar stack */}
-      {others.length > 0 && (
+      {uniqueOthers.length > 0 && (
         <>
           <div className="flex items-center -space-x-2">
             {visibleOthers.map(({ connectionId, info }) => (

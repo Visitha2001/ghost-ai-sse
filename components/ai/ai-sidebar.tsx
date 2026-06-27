@@ -7,6 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { useAiStatusStore } from "@/hooks/use-ai-status-store"
+import { useEventListener, useBroadcastEvent, useSelf } from "@liveblocks/react/suspense"
+import { AiChatFeedPayload, AiChatFeedPayloadSchema } from "@/types/tasks"
+import { toast } from "sonner"
 
 interface AiSidebarProps {
   isOpen: boolean
@@ -20,6 +23,49 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
   
   const isGenerating = useAiStatusStore((state) => state.isGenerating)
   const latestMessage = useAiStatusStore((state) => state.latestMessage)
+
+  const [messages, setMessages] = React.useState<AiChatFeedPayload[]>([])
+  const broadcast = useBroadcastEvent()
+  const self = useSelf()
+
+  useEventListener(({ event }) => {
+    if (event.type === "ai-chat") {
+      const parsed = AiChatFeedPayloadSchema.safeParse(event.payload)
+      if (parsed.success) {
+        setMessages((prev) => [...prev, parsed.data])
+      }
+    }
+  })
+
+  const messagesEndRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  const handleSendMessage = () => {
+    if (!input.trim() || isGenerating || !self) return
+    
+    const message: AiChatFeedPayload = {
+      id: crypto.randomUUID(),
+      senderId: self.id,
+      senderName: self.info?.name,
+      senderAvatar: self.info?.avatar,
+      content: input.trim(),
+      timestamp: Date.now(),
+      role: "user",
+    }
+    
+    const parsed = AiChatFeedPayloadSchema.safeParse(message)
+    if (!parsed.success) {
+      toast.error("Failed to send message: Invalid format")
+      return
+    }
+    
+    setMessages((prev) => [...prev, message])
+    broadcast({ type: "ai-chat", payload: message })
+    setInput("")
+  }
 
   React.useEffect(() => {
     if (!isDragging) {
@@ -129,63 +175,154 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
         {/* AI Architect Tab */}
         <TabsContent value="architect" className="flex-1 flex flex-col overflow-hidden m-0 data-[state=inactive]:hidden">
           <div className="flex-1 overflow-y-auto p-4 flex flex-col">
-            <div className="flex-1 flex flex-col items-center justify-center text-center select-none py-8">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 border border-brand/20 mb-4">
-                <Bot className="h-6 w-6 text-brand" />
+            {messages.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center select-none py-8">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 border border-brand/20 mb-4">
+                  <Bot className="h-6 w-6 text-brand" />
+                </div>
+                <p className="text-sm font-semibold text-copy-primary mb-2">AI Design Assistant</p>
+                <p className="text-xs text-copy-muted max-w-[220px] leading-relaxed mb-6">
+                  Describe your desired architecture. AI will generate nodes, edges, and technical specifications directly inside your workspace.
+                </p>
+                
+                <div className="flex flex-col gap-2 w-full">
+                  <button 
+                    onClick={() => setInput("Design an e-commerce backend")}
+                    className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate"
+                  >
+                    Design an e-commerce backend
+                  </button>
+                  <button 
+                    onClick={() => setInput("Create a chat app architecture")}
+                    className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate"
+                  >
+                    Create a chat app architecture
+                  </button>
+                  <button 
+                    onClick={() => setInput("Build a CI/CD pipeline")}
+                    className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate"
+                  >
+                    Build a CI/CD pipeline
+                  </button>
+                </div>
               </div>
-              <p className="text-sm font-semibold text-copy-primary mb-2">AI Design Assistant</p>
-              <p className="text-xs text-copy-muted max-w-[220px] leading-relaxed mb-6">
-                Describe your desired architecture. AI will generate nodes, edges, and technical specifications directly inside your workspace.
-              </p>
-              
-              <div className="flex flex-col gap-2 w-full">
-                <button className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate">
-                  Design an e-commerce backend
-                </button>
-                <button className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate">
-                  Create a chat app architecture
-                </button>
-                <button className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate">
-                  Build a CI/CD pipeline
-                </button>
+            ) : (
+              <div className="flex-1 flex flex-col gap-4 mt-auto pb-4">
+                {messages.map((msg) => {
+                  const isSelf = msg.senderId === self?.id
+                  const isAi = msg.role === "assistant"
+                  
+                  if (isSelf) {
+                    return (
+                      <div key={msg.id} className="self-end max-w-[85%] flex flex-col items-end mb-2">
+                        <div className="px-4 py-2.5 bg-[#62C073] text-white rounded-3xl rounded-tr-md text-sm leading-relaxed whitespace-pre-wrap shadow-sm">
+                          {msg.content}
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  if (isAi) {
+                    return (
+                      <div key={msg.id} className="self-start max-w-[85%] flex gap-2 mb-2 group/ai-message">
+                        <div className="flex-shrink-0 mt-auto mb-1">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] border border-white/10 shadow-sm relative overflow-hidden">
+                            <Bot className="h-3.5 w-3.5 text-[#62C073] relative z-10" />
+                          </div>
+                        </div>
+                        <div className="px-4 py-2.5 bg-[#1A1A1A] border border-white/10 text-white/90 rounded-3xl rounded-tl-md text-sm leading-relaxed whitespace-pre-wrap shadow-sm relative overflow-hidden">
+                          {msg.content}
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  // Other human users
+                  return (
+                    <div key={msg.id} className="self-start max-w-[85%] flex gap-2 mb-2">
+                      <div className="flex-shrink-0 mt-auto mb-1">
+                        {msg.senderAvatar ? (
+                          <img src={msg.senderAvatar} alt={msg.senderName || ""} className="w-6 h-6 rounded-full" />
+                        ) : (
+                          <div className="w-6 h-6 rounded-full bg-subtle" />
+                        )}
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-[10px] text-copy-muted mb-1 ml-1">{msg.senderName || "Unknown"}</span>
+                        <div className="px-4 py-2.5 bg-elevated border border-surface-border text-copy-primary rounded-3xl rounded-tl-md text-sm leading-relaxed whitespace-pre-wrap">
+                          {msg.content}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+                
+                {/* AI Thinking Indicator */}
+                {isGenerating && (
+                  <div className="self-start max-w-[85%] flex gap-2 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex-shrink-0 mt-auto mb-1">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] border border-[#62C073]/30 shadow-sm relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-[#62C073]/20 via-transparent to-[#62C073]/20 animate-[spin_3s_linear_infinite]" />
+                        <Bot className="h-3.5 w-3.5 text-[#62C073] relative z-10" />
+                      </div>
+                    </div>
+                    <div className="px-4 py-3.5 bg-[#1A1A1A] border border-[#62C073]/20 rounded-3xl rounded-tl-md shadow-[0_0_15px_rgba(98,192,115,0.1)] relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#62C073]/10 to-transparent translate-x-[-100%] animate-[shimmer_2s_infinite]" />
+                      <div className="flex items-center gap-1.5 relative z-10">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#62C073] animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#62C073] animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#62C073] animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div ref={messagesEndRef} />
               </div>
-            </div>
-            
-            {/* Example user/assistant messages (hidden by default, documented here as per spec) */}
-            <div className="hidden flex-col gap-4 mt-auto">
-              <div className="self-end max-w-[85%] rounded-2xl rounded-tr-sm bg-brand-dim border-brand/50 border-2 text-copy-primary p-3 text-sm">
-                Can you build a chat app architecture?
-              </div>
-              <div className="self-start max-w-[85%] rounded-2xl rounded-tl-sm bg-elevated border border-surface-border text-brand p-3 text-sm">
-                Sure, I&apos;m setting up the canvas now with a React frontend, Node backend, and Redis cache.
-              </div>
-            </div>
+            )}
           </div>
 
-          <div className="p-4 pt-2 border-t border-border shrink-0 bg-base/50 backdrop-blur-sm">
-            <div className="relative flex items-end gap-2 bg-elevated border border-surface-border rounded-xl p-2 focus-within:border-brand/50 focus-within:ring-1 focus-within:ring-brand/50 transition-all">
+          <div className="p-4 pt-2 border-t border-border shrink-0 bg-base/50 backdrop-blur-sm flex flex-col gap-2">
+            {/* Status Strip */}
+            {isGenerating && latestMessage && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1A1A1A] border border-[#62C073]/20 rounded-lg text-xs text-white/80 animate-in fade-in slide-in-from-bottom-1 shadow-sm">
+                <Loader2 className="h-3 w-3 text-[#62C073] animate-spin" />
+                <span className="truncate flex-1">{latestMessage}</span>
+              </div>
+            )}
+            
+            <div className={cn(
+              "relative flex items-end gap-2 bg-elevated border rounded-xl p-2 transition-all shadow-sm",
+              isGenerating ? "border-[#62C073]/30 bg-elevated/50" : "border-surface-border focus-within:border-[#62C073]/50 focus-within:ring-1 focus-within:ring-[#62C073]/30"
+            )}>
               <Textarea 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    if (input.trim() && !isGenerating) setInput("");
+                    handleSendMessage();
                   }
                 }}
                 placeholder={isGenerating ? "AI is working..." : "Ask AI to build or modify..."}
                 disabled={isGenerating}
-                className="min-h-[72px] max-h-[160px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm p-2 shadow-none disabled:opacity-50"
+                className="min-h-[40px] max-h-[160px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm p-2 py-2.5 shadow-none disabled:opacity-50"
               />
               <Button 
+                onClick={handleSendMessage}
                 size="icon" 
-                className="h-8 w-8 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
+                className={cn(
+                  "h-8 w-8 rounded-lg shrink-0 transition-colors",
+                  isGenerating 
+                    ? "bg-[#1A1A1A] text-[#62C073] border border-[#62C073]/20 hover:bg-[#1A1A1A]" 
+                    : "bg-[#62C073] text-white hover:bg-[#62C073]/90"
+                )}
                 disabled={!input.trim() || isGenerating}
               >
                 {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-[10px] text-copy-muted text-center mt-2">
+            <p className="text-[10px] text-copy-muted text-center mt-1">
               <kbd className="font-sans px-1 rounded bg-subtle border border-subtle-border">Enter</kbd> to send, <kbd className="font-sans px-1 rounded bg-subtle border border-subtle-border">Shift + Enter</kbd> for new line
             </p>
           </div>
