@@ -62,6 +62,25 @@ install these agent skills too:
     npx skills add liveblocks/skills
 ```
 
+- run trigger dev
+
+```bash
+    npx trigger.dev@latest dev
+```
+
+- run trigger dev mcp
+
+```bash
+    npx trigger.dev@latest mcp
+```
+
+### Additional dependencies
+
+```bash
+    npm install "@trigger.dev/react-hooks" "@ai-sdk/google" "ai"
+```
+
+
 First, run the development server:
 
 ```bash

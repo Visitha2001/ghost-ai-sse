@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Feature `20-ai-sidebar-shell.md` implemented. Ready for next feature.
+- Implement `22-design-agent-api.md` (Design Agent Backend Wiring).
 
 ## Completed
 
@@ -35,13 +35,14 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## In Progress
 
+- `22-design-agent-api.md`: Setting up the backend flow for design generation using Trigger.dev to handle background jobs, track runs, and issue real-time tokens.
 - `21-canvas-autosave.md`: Adding canvas autosave and loading using Vercel Blob and Prisma. Added manual Save button to editor navbar with spinning Loader2 icon during save, wired through `useCanvasAutosaveStore.triggerSave`. Integrated Sonner toast notifications (success/error) on manual saves. Installed `sonner` via shadcn CLI, added `<Toaster position="bottom-right" richColors />` to root layout.
 - `09-share-dialog.md`: Setting up Share dialog access control, inviting/removing collaborators by email, loading collaborator names/avatars via Clerk Backend API.
 - **Theme Color Polish**: Transitioning background base variables from near-pitch-black variables to a premium slate-charcoal gray palette.
 
 ## Next Up
 
-- AI system design code specs generation and integration.
+- Further AI system design generation and integration logic.
 
 ## Open Questions
 

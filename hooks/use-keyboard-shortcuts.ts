@@ -3,13 +3,13 @@ import { useReactFlow } from '@xyflow/react'
 import { canvasNode, canvasEdge } from '@/types/canvas'
 import { useCanvasClipboard } from './use-canvas-clipboard'
 
-import { NodeChange, EdgeChange } from '@xyflow/react'
+import { OnNodesChange, OnEdgesChange } from '@xyflow/react'
 
 interface UseKeyboardShortcutsProps {
   undo: () => void
   redo: () => void
-  onNodesChange: (changes: NodeChange[]) => void
-  onEdgesChange: (changes: EdgeChange[]) => void
+  onNodesChange: OnNodesChange<canvasNode>
+  onEdgesChange: OnEdgesChange<canvasEdge>
 }
 
 const PASTE_OFFSET = 24 // px offset for pasted items
