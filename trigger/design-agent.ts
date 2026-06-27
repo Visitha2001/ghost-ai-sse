@@ -20,7 +20,7 @@ async function setPresence(roomId: string, status: string, ttl: number = 60) {
       },
       body: JSON.stringify({
         userId: AGENT_ID,
-        data: { status, isThinking: true, cursor: { x: 0, y: 0 } },
+        data: { status, thinking: true, cursor: { x: 0, y: 0 } },
         userInfo: {
           name: "AI Architect",
           avatar: "https://api.dicebear.com/9.x/bottts/svg?seed=ai-architect&backgroundColor=b6e3f4",
@@ -48,7 +48,7 @@ async function clearPresence(roomId: string) {
       },
       body: JSON.stringify({
         userId: AGENT_ID,
-        data: { status: "done", isThinking: false, cursor: null },
+        data: { status: "done", thinking: false, cursor: null },
         userInfo: {
           name: "AI Architect",
           avatar: "https://api.dicebear.com/9.x/bottts/svg?seed=ai-architect&backgroundColor=b6e3f4",

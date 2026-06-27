@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Bot, X, FileText, Download, ArrowUp } from "lucide-react"
+import { Bot, X, FileText, Download, ArrowUp, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { useAiStatusStore } from "@/hooks/use-ai-status-store"
 
 interface AiSidebarProps {
   isOpen: boolean
@@ -14,6 +15,41 @@ interface AiSidebarProps {
 
 export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
   const [input, setInput] = React.useState("")
+  const [width, setWidth] = React.useState(320)
+  const [isDragging, setIsDragging] = React.useState(false)
+  
+  const isGenerating = useAiStatusStore((state) => state.isGenerating)
+  const latestMessage = useAiStatusStore((state) => state.latestMessage)
+
+  React.useEffect(() => {
+    if (!isDragging) {
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
+      return
+    }
+
+    document.body.style.cursor = "col-resize"
+    document.body.style.userSelect = "none"
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // 16px is the right margin (sm:mr-4)
+      const newWidth = window.innerWidth - e.clientX - 16
+      if (newWidth > 280 && newWidth < 800) {
+        setWidth(newWidth)
+      }
+    }
+
+    const handleMouseUp = () => setIsDragging(false)
+
+    document.addEventListener("mousemove", handleMouseMove)
+    document.addEventListener("mouseup", handleMouseUp)
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleMouseUp)
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
+    }
+  }, [isDragging])
 
   return (
     <>
@@ -24,20 +60,41 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
         />
       )}
       <aside
+        style={{ "--ai-sidebar-width": `${width}px` } as React.CSSProperties}
         className={cn(
-          "fixed sm:relative top-[5.75rem] sm:top-auto bottom-4 sm:bottom-auto right-4 sm:right-auto h-[calc(100vh-6.75rem)] sm:h-[calc(100%-2rem)] bg-card/85 backdrop-blur-md flex flex-col shrink-0 z-50 sm:z-30 transition-all duration-300 ease-in-out rounded-2xl overflow-hidden shadow-2xl",
+          "fixed sm:relative top-[5.75rem] sm:top-auto bottom-4 sm:bottom-auto right-4 sm:right-auto h-[calc(100vh-6.75rem)] sm:h-[calc(100%-2rem)] bg-card/85 backdrop-blur-md flex flex-col shrink-0 z-50 sm:z-30 transition-all duration-300 ease-in-out rounded-2xl overflow-hidden shadow-2xl group/sidebar",
           isOpen
-            ? "w-[85vw] sm:w-80 opacity-100 translate-x-0 sm:my-4 sm:mr-4 border border-border/80"
+            ? "w-[85vw] sm:w-[var(--ai-sidebar-width)] opacity-100 translate-x-0 sm:my-4 sm:mr-4 border border-border/80"
             : "w-[85vw] sm:w-0 opacity-0 translate-x-[calc(100%+1.5rem)] sm:translate-x-12 sm:my-4 sm:mr-0 border-0 pointer-events-none"
         )}
       >
+        {/* Resize Handle */}
+        {isOpen && (
+          <div 
+            className={cn(
+              "absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize z-50 transition-colors hidden sm:block",
+              isDragging ? "bg-brand/80" : "hover:bg-brand/50 group-hover/sidebar:bg-border/50 bg-transparent"
+            )}
+            onMouseDown={() => setIsDragging(true)}
+          />
+        )}
       {/* Header */}
       <div className="h-14 flex items-center justify-between px-4 border-b border-border shrink-0 select-none">
         <div className="flex items-center gap-3">
-          <Bot className="h-5 w-5 text-brand" />
+          <Bot className={cn("h-5 w-5 text-brand", isGenerating && "animate-pulse")} />
           <div className="flex flex-col">
-            <h3 className="font-semibold text-sm text-copy-primary leading-tight">AI Workspace</h3>
-            <p className="text-[10px] text-copy-muted leading-tight">Collaborate with Ghost AI</p>
+            <h3 className="font-semibold text-sm text-copy-primary leading-tight flex items-center gap-2">
+              AI Workspace
+              {isGenerating && (
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+                </span>
+              )}
+            </h3>
+            <p className="text-[10px] text-copy-muted leading-tight max-w-[180px] truncate">
+              {isGenerating ? (latestMessage || "AI is generating...") : "Collaborate with Ghost AI"}
+            </p>
           </div>
         </div>
         <Button
@@ -113,18 +170,19 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    if (input.trim()) setInput("");
+                    if (input.trim() && !isGenerating) setInput("");
                   }
                 }}
-                placeholder="Ask AI to build or modify..."
-                className="min-h-[72px] max-h-[160px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm p-2 shadow-none"
+                placeholder={isGenerating ? "AI is working..." : "Ask AI to build or modify..."}
+                disabled={isGenerating}
+                className="min-h-[72px] max-h-[160px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm p-2 shadow-none disabled:opacity-50"
               />
               <Button 
                 size="icon" 
                 className="h-8 w-8 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
-                disabled={!input.trim()}
+                disabled={!input.trim() || isGenerating}
               >
-                <ArrowUp className="h-4 w-4" />
+                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
               </Button>
             </div>
             <p className="text-[10px] text-copy-muted text-center mt-2">

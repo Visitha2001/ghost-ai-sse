@@ -32,6 +32,7 @@ Update this file whenever the current phase, active feature, or implementation s
 - `20-ai-sidebar-shell.md`: Separated the AI sidebar into its own component (`AiSidebar`). Implemented the AI Architect tab with an empty state and input UI, and the Specs tab with a demo spec card. Maintained existing layout floating behavior.
 - **Edge Label Pills**: Added inline text labels to canvas edges. Double-clicking any edge path opens a pill-shaped inline input. Labels can be dragged to reposition them anywhere along the edge path.
 - **Canvas Copy-Paste**: Added support for multi-select area rubber-banding and Ctrl/⌘+C / Ctrl/⌘+V to copy and paste nodes/edges. Pasted items get fresh IDs and a 24px position offset.
+- `24-ai-presence-state.md`: Added shared AI thinking state. Created `ai-status-feed` schema in `types/tasks.ts`. Sidebar now shows global AI activity status based on `thinking: true` presence from any user, dims input/button, and displays feed messages. LiveCursors also displays a spinner in the cursor name badge when a collaborator is generating.
 
 ## In Progress
 

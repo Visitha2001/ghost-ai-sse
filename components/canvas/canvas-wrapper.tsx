@@ -3,6 +3,7 @@
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react"
 import { ReactFlowProvider } from '@xyflow/react'
 import { CanvasFlow } from "./canvas-flow"
+import { AiStatusSync } from "./ai-status-sync"
 
 import { ErrorBoundary } from "./error-boundary"
 import { Loader2, AlertTriangle } from "lucide-react"
@@ -20,7 +21,7 @@ export function CanvasWrapper({ roomId }: { roomId: string }) {
           id={roomId}
           initialPresence={{
             cursor: null,
-            isThinking: false,
+            thinking: false,
           }}
         >
           <ClientSideSuspense fallback={
@@ -29,6 +30,7 @@ export function CanvasWrapper({ roomId }: { roomId: string }) {
               <p>Loading collaborative canvas...</p>
             </div>
           }>
+            <AiStatusSync />
             <div className="relative h-full w-full">
               <ReactFlowProvider>
                 <CanvasFlow />

@@ -1,8 +1,10 @@
+import { AiStatusFeedPayload } from "./types/tasks";
+
 declare global {
   interface Liveblocks {
     Presence: {
       cursor: { x: number; y: number } | null;
-      isThinking: boolean;
+      thinking?: boolean;
     };
     UserMeta: {
       id: string;
@@ -11,6 +13,10 @@ declare global {
         avatar: string;
         color: string;
       };
+    };
+    RoomEvent: {
+      type: "ai-status-feed";
+      payload: AiStatusFeedPayload;
     };
   }
 }
