@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Implement `22-design-agent-api.md` (Design Agent Backend Wiring).
+- Implement `23-design-agent-logic.md` (Design Agent Logic).
 
 ## Completed
 
@@ -32,17 +32,20 @@ Update this file whenever the current phase, active feature, or implementation s
 - `20-ai-sidebar-shell.md`: Separated the AI sidebar into its own component (`AiSidebar`). Implemented the AI Architect tab with an empty state and input UI, and the Specs tab with a demo spec card. Maintained existing layout floating behavior.
 - **Edge Label Pills**: Added inline text labels to canvas edges. Double-clicking any edge path opens a pill-shaped inline input. Labels can be dragged to reposition them anywhere along the edge path.
 - **Canvas Copy-Paste**: Added support for multi-select area rubber-banding and Ctrl/⌘+C / Ctrl/⌘+V to copy and paste nodes/edges. Pasted items get fresh IDs and a 24px position offset.
+- `24-ai-presence-state.md`: Added shared AI thinking state. Created `ai-status-feed` schema in `types/tasks.ts`. Sidebar now shows global AI activity status based on `thinking: true` presence from any user, dims input/button, and displays feed messages. LiveCursors also displays a spinner in the cursor name badge when a collaborator is generating.
+- `25-sidebar-chat-feed.md`: Added real-time room chat to the AI sidebar using a separate Liveblocks `ai-chat` feed.
 
 ## In Progress
 
 - `22-design-agent-api.md`: Setting up the backend flow for design generation using Trigger.dev to handle background jobs, track runs, and issue real-time tokens.
+- `23-design-agent-logic.md`: Implementing the full AI design agent using Gemini to parse user prompts into Liveblocks storage patches.
 - `21-canvas-autosave.md`: Adding canvas autosave and loading using Vercel Blob and Prisma. Added manual Save button to editor navbar with spinning Loader2 icon during save, wired through `useCanvasAutosaveStore.triggerSave`. Integrated Sonner toast notifications (success/error) on manual saves. Installed `sonner` via shadcn CLI, added `<Toaster position="bottom-right" richColors />` to root layout.
 - `09-share-dialog.md`: Setting up Share dialog access control, inviting/removing collaborators by email, loading collaborator names/avatars via Clerk Backend API.
 - **Theme Color Polish**: Transitioning background base variables from near-pitch-black variables to a premium slate-charcoal gray palette.
 
 ## Next Up
 
-- Further AI system design generation and integration logic.
+- Generating technical specs from the graph (`24-spec-generation.md`).
 
 ## Open Questions
 
