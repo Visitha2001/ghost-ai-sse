@@ -116,7 +116,7 @@ export const designTask = task({
 
       // 3. Call AI
       const { object } = await generateObject({
-        model: google("gemini-2.5-flash"), // or 2.5-pro if available
+        model: google("gemini-2.5-flash"), // using a valid fallback model to avoid 429 errors
         system: `You are an expert AI Architect mapping out software systems into diagrams.
 You are given the current state of a React Flow canvas as JSON, and a user prompt.
 You must return the new nodes and edges to ADD to the diagram to fulfill the prompt.

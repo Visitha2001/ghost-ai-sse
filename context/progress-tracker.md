@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Implement `23-design-agent-logic.md` (Design Agent Logic).
+- Implement `26-design-agent-frontend.md` (Design Agent - Frontend Integration).
 
 ## Completed
 

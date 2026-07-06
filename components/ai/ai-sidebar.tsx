@@ -7,9 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { useAiStatusStore } from "@/hooks/use-ai-status-store"
-import { useEventListener, useBroadcastEvent, useSelf } from "@liveblocks/react/suspense"
+import { useEventListener, useBroadcastEvent, useSelf, useRoom } from "@liveblocks/react/suspense"
 import { AiChatFeedPayload, AiChatFeedPayloadSchema } from "@/types/tasks"
 import { toast } from "sonner"
+import { useRealtimeRun } from "@trigger.dev/react-hooks"
+import { Trash2 } from "lucide-react"
 
 interface AiSidebarProps {
   isOpen: boolean
@@ -27,6 +29,14 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
   const [messages, setMessages] = React.useState<AiChatFeedPayload[]>([])
   const broadcast = useBroadcastEvent()
   const self = useSelf()
+  const room = useRoom()
+
+  const [triggerRun, setTriggerRun] = React.useState<{ runId: string; publicToken: string } | null>(null)
+  
+  const { run } = useRealtimeRun(triggerRun?.runId, {
+    accessToken: triggerRun?.publicToken,
+    enabled: !!triggerRun,
+  })
 
   useEventListener(({ event }) => {
     if (event.type === "ai-chat") {
@@ -43,15 +53,47 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const handleSendMessage = () => {
-    if (!input.trim() || isGenerating || !self) return
+  React.useEffect(() => {
+    if (run?.status === "COMPLETED" || run?.status === "FAILED") {
+      setTriggerRun(null)
+      
+      if (run.status === "COMPLETED") {
+        const message: AiChatFeedPayload = {
+          id: crypto.randomUUID(),
+          senderId: "system",
+          senderName: "Ghost AI",
+          senderAvatar: undefined,
+          content: "I have updated the design based on your request. Let me know if you need any other changes!",
+          timestamp: Date.now(),
+          role: "assistant",
+        }
+        setMessages((prev) => [...prev, message])
+        broadcast({ type: "ai-chat", payload: message })
+      } else if (run.status === "FAILED") {
+        const message: AiChatFeedPayload = {
+          id: crypto.randomUUID(),
+          senderId: "system",
+          senderName: "Ghost AI System",
+          senderAvatar: undefined,
+          content: "Error: The design generation failed.",
+          timestamp: Date.now(),
+          role: "assistant",
+        }
+        setMessages((prev) => [...prev, message])
+      }
+    }
+  }, [run?.status, broadcast])
+
+  const handleSendMessage = async (customInput?: string) => {
+    const textToSend = typeof customInput === "string" ? customInput : input.trim()
+    if (!textToSend || isGenerating || !!triggerRun || !self) return
     
     const message: AiChatFeedPayload = {
       id: crypto.randomUUID(),
       senderId: self.id,
       senderName: self.info?.name,
       senderAvatar: self.info?.avatar,
-      content: input.trim(),
+      content: textToSend,
       timestamp: Date.now(),
       role: "user",
     }
@@ -65,6 +107,35 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
     setMessages((prev) => [...prev, message])
     broadcast({ type: "ai-chat", payload: message })
     setInput("")
+
+    try {
+      const res = await fetch("/api/ai/design", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: textToSend,
+          roomId: room.id,
+          projectId: room.id,
+        })
+      })
+      
+      if (!res.ok) throw new Error("Failed to start design generation")
+      
+      const data = await res.json()
+      if (data.runId && data.publicToken) {
+        setTriggerRun({ runId: data.runId, publicToken: data.publicToken })
+      }
+    } catch (error) {
+      const errorMsg: AiChatFeedPayload = {
+        id: crypto.randomUUID(),
+        senderId: "system",
+        senderName: "Ghost AI System",
+        content: `Error: ${error instanceof Error ? error.message : "Failed to connect to AI"}`,
+        timestamp: Date.now(),
+        role: "assistant",
+      }
+      setMessages((prev) => [...prev, errorMsg])
+    }
   }
 
   React.useEffect(() => {
@@ -143,14 +214,27 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
             </p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="h-8 w-8 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {messages.length > 0 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMessages([])}
+              className="h-8 w-8 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500"
+              title="Clear Chat"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-8 w-8 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -187,19 +271,19 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                 
                 <div className="flex flex-col gap-2 w-full">
                   <button 
-                    onClick={() => setInput("Design an e-commerce backend")}
+                    onClick={() => handleSendMessage("Design an e-commerce backend")}
                     className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate"
                   >
                     Design an e-commerce backend
                   </button>
                   <button 
-                    onClick={() => setInput("Create a chat app architecture")}
+                    onClick={() => handleSendMessage("Create a chat app architecture")}
                     className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate"
                   >
                     Create a chat app architecture
                   </button>
                   <button 
-                    onClick={() => setInput("Build a CI/CD pipeline")}
+                    onClick={() => handleSendMessage("Build a CI/CD pipeline")}
                     className="text-xs bg-subtle text-brand hover:bg-subtle/80 px-3 py-2 rounded-full transition-colors text-left truncate"
                   >
                     Build a CI/CD pipeline
@@ -215,7 +299,7 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                   if (isSelf) {
                     return (
                       <div key={msg.id} className="self-end max-w-[85%] flex flex-col items-end mb-2">
-                        <div className="px-4 py-2.5 bg-[#62C073] text-white rounded-3xl rounded-tr-md text-sm leading-relaxed whitespace-pre-wrap shadow-sm">
+                        <div className="px-4 py-2.5 bg-brand text-primary-foreground rounded-3xl rounded-tr-md text-sm leading-relaxed whitespace-pre-wrap shadow-sm">
                           {msg.content}
                         </div>
                       </div>
@@ -227,7 +311,7 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                       <div key={msg.id} className="self-start max-w-[85%] flex gap-2 mb-2 group/ai-message">
                         <div className="flex-shrink-0 mt-auto mb-1">
                           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] border border-white/10 shadow-sm relative overflow-hidden">
-                            <Bot className="h-3.5 w-3.5 text-[#62C073] relative z-10" />
+                            <Bot className="h-3.5 w-3.5 text-brand relative z-10" />
                           </div>
                         </div>
                         <div className="px-4 py-2.5 bg-[#1A1A1A] border border-white/10 text-white/90 rounded-3xl rounded-tl-md text-sm leading-relaxed whitespace-pre-wrap shadow-sm relative overflow-hidden">
@@ -261,17 +345,20 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                 {isGenerating && (
                   <div className="self-start max-w-[85%] flex gap-2 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <div className="flex-shrink-0 mt-auto mb-1">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] border border-[#62C073]/30 shadow-sm relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-[#62C073]/20 via-transparent to-[#62C073]/20 animate-[spin_3s_linear_infinite]" />
-                        <Bot className="h-3.5 w-3.5 text-[#62C073] relative z-10" />
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A1A1A] border border-brand/30 shadow-sm relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-brand/20 via-transparent to-brand/20 animate-[spin_3s_linear_infinite]" />
+                        <Bot className="h-3.5 w-3.5 text-brand relative z-10" />
                       </div>
                     </div>
-                    <div className="px-4 py-3.5 bg-[#1A1A1A] border border-[#62C073]/20 rounded-3xl rounded-tl-md shadow-[0_0_15px_rgba(98,192,115,0.1)] relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#62C073]/10 to-transparent translate-x-[-100%] animate-[shimmer_2s_infinite]" />
-                      <div className="flex items-center gap-1.5 relative z-10">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#62C073] animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#62C073] animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#62C073] animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className="relative p-[1px] rounded-3xl rounded-tl-md overflow-hidden shadow-sm">
+                      <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_300deg,theme(colors.brand.DEFAULT)_360deg)] animate-[spin_2s_linear_infinite]" />
+                      <div className="relative px-4 py-3.5 bg-[#1A1A1A] rounded-3xl rounded-tl-md overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand/10 to-transparent translate-x-[-100%] animate-[shimmer_2s_infinite]" />
+                        <div className="flex items-center gap-1.5 relative z-10">
+                          <div className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <div className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -285,15 +372,15 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
           <div className="p-4 pt-2 border-t border-border shrink-0 bg-base/50 backdrop-blur-sm flex flex-col gap-2">
             {/* Status Strip */}
             {isGenerating && latestMessage && (
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1A1A1A] border border-[#62C073]/20 rounded-lg text-xs text-white/80 animate-in fade-in slide-in-from-bottom-1 shadow-sm">
-                <Loader2 className="h-3 w-3 text-[#62C073] animate-spin" />
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1A1A1A] border border-brand/20 rounded-lg text-xs text-white/80 animate-in fade-in slide-in-from-bottom-1 shadow-sm">
+                <Loader2 className="h-3 w-3 text-brand animate-spin" />
                 <span className="truncate flex-1">{latestMessage}</span>
               </div>
             )}
             
             <div className={cn(
               "relative flex items-end gap-2 bg-elevated border rounded-xl p-2 transition-all shadow-sm",
-              isGenerating ? "border-[#62C073]/30 bg-elevated/50" : "border-surface-border focus-within:border-[#62C073]/50 focus-within:ring-1 focus-within:ring-[#62C073]/30"
+              isGenerating ? "border-brand/30 bg-elevated/50" : "border-surface-border focus-within:border-brand/50 focus-within:ring-1 focus-within:ring-brand/30"
             )}>
               <Textarea 
                 value={input}
@@ -304,22 +391,22 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                     handleSendMessage();
                   }
                 }}
-                placeholder={isGenerating ? "AI is working..." : "Ask AI to build or modify..."}
-                disabled={isGenerating}
+                placeholder={isGenerating || triggerRun ? "AI is working..." : "Ask AI to build or modify..."}
+                disabled={isGenerating || !!triggerRun}
                 className="min-h-[40px] max-h-[160px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm p-2 py-2.5 shadow-none disabled:opacity-50"
               />
               <Button 
-                onClick={handleSendMessage}
+                onClick={() => handleSendMessage()}
                 size="icon" 
                 className={cn(
                   "h-8 w-8 rounded-lg shrink-0 transition-colors",
-                  isGenerating 
-                    ? "bg-[#1A1A1A] text-[#62C073] border border-[#62C073]/20 hover:bg-[#1A1A1A]" 
-                    : "bg-[#62C073] text-white hover:bg-[#62C073]/90"
+                  isGenerating || triggerRun
+                    ? "bg-[#1A1A1A] text-brand border border-brand/20 hover:bg-[#1A1A1A]" 
+                    : "bg-brand text-primary-foreground hover:bg-brand/90"
                 )}
-                disabled={!input.trim() || isGenerating}
+                disabled={!input.trim() || isGenerating || !!triggerRun}
               >
-                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
+                {isGenerating || triggerRun ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
               </Button>
             </div>
             <p className="text-[10px] text-copy-muted text-center mt-1">
