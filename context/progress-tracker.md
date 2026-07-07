@@ -45,7 +45,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Next Up
 
-- Generating technical specs from the graph (`24-spec-generation.md`).
+- `27-spec-generation-flow.md`: Setting up backend flow for AI-powered spec generation.
 
 ## Open Questions
 
