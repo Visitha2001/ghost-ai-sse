@@ -2,7 +2,8 @@ import { task, metadata } from "@trigger.dev/sdk";
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
-
+import { put } from "@vercel/blob";
+import { prisma } from "@/lib/prisma";
 const generateSpecSchema = z.object({
   projectId: z.string(),
   roomId: z.string(),
@@ -57,10 +58,25 @@ Use Markdown formatting properly with headings, lists, bold text, and code block
       console.log(`Generated spec of length ${text.length}`);
 
       metadata
+        .set("message", "Saving specification...");
+
+      const blob = await put(`specs/${projectId}/spec-${Date.now()}.md`, text, {
+        access: "public",
+        contentType: "text/markdown",
+      });
+
+      const spec = await prisma.projectSpec.create({
+        data: {
+          projectId,
+          filePath: blob.url,
+        },
+      });
+
+      metadata
         .set("status", "completed")
         .set("message", "Specification generated successfully.");
 
-      return { markdown: text };
+      return { markdown: text, specId: spec.id, url: blob.url };
     } catch (err) {
       console.error("Spec generation failed:", err);
       metadata

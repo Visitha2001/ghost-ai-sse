@@ -8,7 +8,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Goal
 
-- Implement `26-design-agent-frontend.md` (Design Agent - Frontend Integration).
+- Implement `28-spec-persistence-download.md` (Spec Persistence and Download).
 
 ## Completed
 
@@ -34,6 +34,8 @@ Update this file whenever the current phase, active feature, or implementation s
 - **Canvas Copy-Paste**: Added support for multi-select area rubber-banding and Ctrl/⌘+C / Ctrl/⌘+V to copy and paste nodes/edges. Pasted items get fresh IDs and a 24px position offset.
 - `24-ai-presence-state.md`: Added shared AI thinking state. Created `ai-status-feed` schema in `types/tasks.ts`. Sidebar now shows global AI activity status based on `thinking: true` presence from any user, dims input/button, and displays feed messages. LiveCursors also displays a spinner in the cursor name badge when a collaborator is generating.
 - `25-sidebar-chat-feed.md`: Added real-time room chat to the AI sidebar using a separate Liveblocks `ai-chat` feed.
+- `26-design-agent-frontend.md`: Implemented the design agent frontend integration including AI sidebar submission, RealtimeRun connection, status strip, and chat updates.
+- `27-spec-generation-flow.md`: Set up the backend flow for AI-powered spec generation with Trigger.dev.
 
 ## In Progress
 
@@ -45,7 +47,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Next Up
 
-- `27-spec-generation-flow.md`: Setting up backend flow for AI-powered spec generation.
+- `29-spec-frontend-integration.md` (or similar next step).
 
 ## Open Questions
 
