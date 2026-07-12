@@ -5,6 +5,9 @@ import { Bot, X, FileText, Download, ArrowUp, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import ReactMarkdown from "react-markdown"
 import { cn } from "@/lib/utils"
 import { useAiStatusStore } from "@/hooks/use-ai-status-store"
 import { useEventListener, useBroadcastEvent, useSelf, useRoom } from "@liveblocks/react/suspense"
@@ -31,6 +34,64 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
   const self = useSelf()
   const room = useRoom()
 
+  const [specs, setSpecs] = React.useState<any[]>([])
+  const [isLoadingSpecs, setIsLoadingSpecs] = React.useState(false)
+  const [selectedSpec, setSelectedSpec] = React.useState<any | null>(null)
+  const [specContent, setSpecContent] = React.useState<string>("")
+  const [isLoadingContent, setIsLoadingContent] = React.useState(false)
+
+  const fetchSpecs = React.useCallback(async () => {
+    if (!room.id) return
+    setIsLoadingSpecs(true)
+    try {
+      const res = await fetch(`/api/projects/${room.id}/specs`)
+      if (res.ok) {
+        const data = await res.json()
+        setSpecs(data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch specs", error)
+    } finally {
+      setIsLoadingSpecs(false)
+    }
+  }, [room.id])
+
+  React.useEffect(() => {
+    if (isOpen) {
+      fetchSpecs()
+    }
+  }, [isOpen, fetchSpecs])
+
+  const handleOpenSpec = async (spec: any) => {
+    setSelectedSpec(spec)
+    setSpecContent("")
+    setIsLoadingContent(true)
+    try {
+      const res = await fetch(`/api/projects/${room.id}/specs/${spec.id}/download`)
+      if (res.ok) {
+        const text = await res.text()
+        setSpecContent(text)
+      } else {
+        toast.error("Failed to load spec content")
+      }
+    } catch (error) {
+      console.error("Failed to load spec content", error)
+      toast.error("Failed to load spec content")
+    } finally {
+      setIsLoadingContent(false)
+    }
+  }
+
+  const handleDownload = (spec: any) => {
+    const url = `/api/projects/${room.id}/specs/${spec.id}/download`
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `spec-${spec.id}.md`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
   const [triggerRun, setTriggerRun] = React.useState<{ runId: string; publicToken: string } | null>(null)
   
   const { run } = useRealtimeRun(triggerRun?.runId, {
@@ -53,17 +114,25 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  const processedRuns = React.useRef<Set<string>>(new Set())
+
   React.useEffect(() => {
-    if (run?.status === "COMPLETED" || run?.status === "FAILED") {
+    if (!run || !run.id) return
+    
+    if (run.status === "COMPLETED" || run.status === "FAILED") {
+      if (processedRuns.current.has(run.id)) return
+      processedRuns.current.add(run.id)
+      
       setTriggerRun(null)
       
       if (run.status === "COMPLETED") {
+        const replyText = run.output?.reply || "I have updated the design based on your request. Let me know if you need any other changes!";
         const message: AiChatFeedPayload = {
           id: crypto.randomUUID(),
           senderId: "system",
           senderName: "Ghost AI",
           senderAvatar: undefined,
-          content: "I have updated the design based on your request. Let me know if you need any other changes!",
+          content: replyText,
           timestamp: Date.now(),
           role: "assistant",
         }
@@ -82,7 +151,7 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
         setMessages((prev) => [...prev, message])
       }
     }
-  }, [run?.status, broadcast])
+  }, [run?.status, run?.id, run?.output, broadcast])
 
   const handleSendMessage = async (customInput?: string) => {
     const textToSend = typeof customInput === "string" ? customInput : input.trim()
@@ -423,26 +492,80 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
           </Button>
 
           <div className="space-y-4">
-            <h4 className="text-xs font-medium text-copy-muted uppercase tracking-wider">Current Specifications</h4>
-            
-            <div className="bg-elevated border border-surface-border rounded-xl p-4 flex flex-col gap-3 group relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-brand/50"></div>
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2 text-copy-primary">
-                  <FileText className="h-4 w-4 text-brand" />
-                  <span className="font-medium text-sm">System Architecture</span>
-                </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6 rounded-md opacity-50 cursor-not-allowed" disabled>
-                  <Download className="h-3 w-3" />
-                </Button>
-              </div>
-              <p className="text-xs text-copy-muted line-clamp-3">
-                Overview of the microservices layout, including the API Gateway, Authentication Service, and main database clusters. Outlines the primary communication protocols and scaling strategies.
-              </p>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-medium text-copy-muted uppercase tracking-wider">Current Specifications</h4>
+              <Button variant="ghost" size="sm" onClick={fetchSpecs} className="h-6 px-2 text-[10px]" disabled={isLoadingSpecs}>
+                {isLoadingSpecs ? <Loader2 className="h-3 w-3 animate-spin" /> : "Refresh"}
+              </Button>
             </div>
+            
+            {specs.length === 0 && !isLoadingSpecs ? (
+              <p className="text-xs text-copy-muted text-center py-4">No specs generated yet.</p>
+            ) : (
+              specs.map((spec) => (
+                <div key={spec.id} onClick={() => handleOpenSpec(spec)} className="bg-elevated border border-surface-border hover:border-brand/50 cursor-pointer rounded-xl p-4 flex flex-col gap-3 group relative overflow-hidden transition-colors">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-brand/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="flex items-start justify-between">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2 text-copy-primary">
+                        <FileText className="h-4 w-4 text-brand" />
+                        <span className="font-medium text-sm">System Spec</span>
+                      </div>
+                      <span className="text-[10px] text-copy-muted">
+                        {new Date(spec.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-brand/10 hover:text-brand" 
+                      onClick={(e) => { e.stopPropagation(); handleDownload(spec); }}
+                    >
+                      <Download className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Spec Preview Modal */}
+      <Dialog open={!!selectedSpec} onOpenChange={(open) => !open && setSelectedSpec(null)}>
+        <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden bg-card border-border/80 shadow-2xl">
+          <DialogHeader className="p-4 border-b border-border bg-subtle/50 flex flex-row items-center justify-between">
+            <div className="flex flex-col">
+              <DialogTitle className="text-lg font-semibold text-copy-primary">System Specification</DialogTitle>
+              {selectedSpec && (
+                <p className="text-xs text-copy-muted mt-1">Generated on {new Date(selectedSpec.createdAt).toLocaleString()}</p>
+              )}
+            </div>
+            {selectedSpec && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 mr-6"
+                onClick={() => handleDownload(selectedSpec)}
+              >
+                <Download className="h-4 w-4" />
+                Download
+              </Button>
+            )}
+          </DialogHeader>
+          <ScrollArea className="flex-1 p-6">
+            {isLoadingContent ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-brand" />
+              </div>
+            ) : (
+              <div className="font-sans text-sm text-copy-primary [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:mt-6 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-2 [&_h3]:mt-4 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-1 [&_pre]:bg-[#1A1A1A] [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:overflow-x-auto [&_pre]:mb-4 [&_pre]:border [&_pre]:border-white/10 [&_code]:bg-[#1A1A1A] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:border [&_code]:border-white/10 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:border-0 [&_blockquote]:border-l-4 [&_blockquote]:border-brand/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-copy-muted [&_a]:text-brand [&_a]:underline">
+                <ReactMarkdown>{specContent}</ReactMarkdown>
+              </div>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </aside>
     </>
   )

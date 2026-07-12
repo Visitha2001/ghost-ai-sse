@@ -93,7 +93,8 @@ const designSchema = z.object({
     sourceNodeId: z.string(),
     targetNodeId: z.string(),
     label: z.string().optional()
-  }))
+  })),
+  reply: z.string().describe("A friendly, conversational reply to the user explaining what you just did.")
 });
 
 export const designTask = task({
@@ -126,7 +127,8 @@ Layout rules:
 - Space nodes reasonably (e.g. x offset 250, y offset 150).
 Colors: neutral, blue, purple, orange, red, pink, green, teal. Use them semantically (e.g., blue for frontend, green for database, orange for queues).
 Shapes: process, decision, terminator, connector, database, preparation.
-Provide unique IDs for the nodes (e.g. 'node-api-123') and edges (e.g. 'edge-api-db-456').`,
+Provide unique IDs for the nodes (e.g. 'node-api-123') and edges (e.g. 'edge-api-db-456').
+Also include a friendly 'reply' message explaining what you added to the canvas.`,
         prompt: `Current canvas state:\n${currentState}\n\nUser request:\n${prompt}`,
         schema: designSchema
       });
@@ -178,7 +180,7 @@ Provide unique IDs for the nodes (e.g. 'node-api-123') and edges (e.g. 'edge-api
       // 6. Clear presence
       await clearPresence(roomId);
 
-      return { status: "success", generatedNodes: object.nodes.length, generatedEdges: object.edges.length };
+      return { status: "success", generatedNodes: object.nodes.length, generatedEdges: object.edges.length, reply: object.reply };
 
     } catch (err) {
       console.error("Design agent failed:", err);

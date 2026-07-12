@@ -189,8 +189,8 @@ export function CanvasFlow() {
         colorMode="dark"
         deleteKeyCode={['Backspace', 'Delete']}
         proOptions={{ hideAttribution: true }}
-        selectionOnDrag
-        panOnDrag={[1, 2]}
+        panOnScroll={false}
+        panOnDrag={true}
         fitView
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1} />

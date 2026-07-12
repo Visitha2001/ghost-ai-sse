@@ -36,6 +36,7 @@ Update this file whenever the current phase, active feature, or implementation s
 - `25-sidebar-chat-feed.md`: Added real-time room chat to the AI sidebar using a separate Liveblocks `ai-chat` feed.
 - `26-design-agent-frontend.md`: Implemented the design agent frontend integration including AI sidebar submission, RealtimeRun connection, status strip, and chat updates.
 - `27-spec-generation-flow.md`: Set up the backend flow for AI-powered spec generation with Trigger.dev.
+- `29-spec-ui-integration.md`: Implemented spec list fetching, preview modal with markdown rendering, and download action in the AI sidebar.
 
 ## In Progress
 
@@ -47,7 +48,7 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Next Up
 
-- `29-spec-frontend-integration.md` (or similar next step).
+- None at present.
 
 ## Open Questions
 
