@@ -101,6 +101,16 @@ export function useKeyboardShortcuts({
       } else if (mod && e.key.toLowerCase() === 'v') {
         e.preventDefault()
         handlePaste()
+      } else if (mod && e.key.toLowerCase() === 'a') {
+        e.preventDefault()
+        const nodes = getNodes()
+        const edges = getEdges()
+        if (nodes.length > 0) {
+          onNodesChange(nodes.map(n => ({ type: 'select', id: n.id, selected: true })))
+        }
+        if (edges.length > 0) {
+          onEdgesChange(edges.map(e => ({ type: 'select', id: e.id, selected: true })))
+        }
       } else if (e.key === '=' || e.key === '+') {
         zoomIn({ duration: 200 })
       } else if (e.key === '-') {
