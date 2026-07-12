@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { tasks } from "@trigger.dev/sdk";
+import { tasks, auth as triggerAuth } from "@trigger.dev/sdk";
 import { prisma } from "@/lib/prisma";
 import type { designTask } from "@/trigger/design-agent";
 
@@ -32,7 +32,18 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ runId: handle.id });
+    // Generate Trigger.dev public token scoped to this run
+    const publicToken = await triggerAuth.createPublicToken({
+      scopes: {
+        read: {
+          runs: [handle.id],
+          tasks: ["design-agent-task"],
+        },
+      },
+      expirationTime: "24h",
+    });
+
+    return NextResponse.json({ runId: handle.id, publicToken });
   } catch (error) {
     console.error("[DESIGN_AGENT_POST]", error);
     return new NextResponse("Internal Error", { status: 500 });
