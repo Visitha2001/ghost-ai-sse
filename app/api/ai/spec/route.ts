@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { tasks } from "@trigger.dev/sdk";
 import { prisma } from "@/lib/prisma";
 import { checkProjectAccess } from "@/lib/project-access";
+import { auth as triggerAuth } from "@trigger.dev/sdk";
 import type { generateSpecTask } from "@/trigger/generate-spec";
 
 export async function POST(req: Request) {
@@ -45,7 +46,18 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ runId: handle.id });
+    // Generate Trigger.dev public token scoped to this run
+    const publicToken = await triggerAuth.createPublicToken({
+      scopes: {
+        read: {
+          runs: [handle.id],
+          tasks: ["generate-spec-task"],
+        },
+      },
+      expirationTime: "24h",
+    });
+
+    return NextResponse.json({ runId: handle.id, publicToken });
   } catch (error) {
     console.error("[SPEC_AGENT_POST]", error);
     return new NextResponse("Internal Error", { status: 500 });

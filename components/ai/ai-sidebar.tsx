@@ -92,6 +92,44 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
     document.body.removeChild(a)
   }
 
+  const [isGeneratingSpec, setIsGeneratingSpec] = React.useState(false)
+  const [specRunData, setSpecRunData] = React.useState<{ runId: string; publicToken: string } | null>(null)
+
+  const { run: specRun } = useRealtimeRun(specRunData?.runId, {
+    accessToken: specRunData?.publicToken,
+    enabled: !!specRunData,
+  })
+
+  const handleGenerateSpec = async () => {
+    if (!room.id) return
+    setIsGeneratingSpec(true)
+    try {
+      const res = await fetch("/api/ai/spec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomId: room.id,
+          chatHistory: messages,
+        })
+      })
+      
+      if (!res.ok) throw new Error("Failed to start spec generation")
+      
+      const data = await res.json()
+      if (data.runId && data.publicToken) {
+        toast.success("Spec generation started!")
+        setSpecRunData({ runId: data.runId, publicToken: data.publicToken })
+      } else {
+        // Fallback if publicToken wasn't returned
+        setIsGeneratingSpec(false)
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to generate spec")
+      setIsGeneratingSpec(false)
+    }
+  }
+
   const [triggerRun, setTriggerRun] = React.useState<{ runId: string; publicToken: string } | null>(null)
   
   const { run } = useRealtimeRun(triggerRun?.runId, {
@@ -152,6 +190,27 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
       }
     }
   }, [run?.status, run?.id, run?.output, broadcast])
+
+  const processedSpecRuns = React.useRef<Set<string>>(new Set())
+
+  React.useEffect(() => {
+    if (!specRun || !specRun.id) return
+    
+    if (specRun.status === "COMPLETED" || specRun.status === "FAILED") {
+      if (processedSpecRuns.current.has(specRun.id)) return
+      processedSpecRuns.current.add(specRun.id)
+      
+      setSpecRunData(null)
+      setIsGeneratingSpec(false)
+      
+      if (specRun.status === "COMPLETED") {
+        toast.success("Spec generated successfully!")
+        fetchSpecs()
+      } else if (specRun.status === "FAILED") {
+        toast.error("Spec generation failed")
+      }
+    }
+  }, [specRun?.status, specRun?.id, fetchSpecs])
 
   const handleSendMessage = async (customInput?: string) => {
     const textToSend = typeof customInput === "string" ? customInput : input.trim()
@@ -486,9 +545,17 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
 
         {/* Specs Tab */}
         <TabsContent value="specs" className="flex-1 flex flex-col overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
-          <Button className="w-full mb-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium">
-            <FileText className="h-4 w-4 mr-2" />
-            Generate Spec
+          <Button 
+            className="w-full mb-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+            onClick={handleGenerateSpec}
+            disabled={isGeneratingSpec}
+          >
+            {isGeneratingSpec ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <FileText className="h-4 w-4 mr-2" />
+            )}
+            {isGeneratingSpec ? "Generating..." : "Generate Spec"}
           </Button>
 
           <div className="space-y-4">
@@ -533,8 +600,8 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
 
       {/* Spec Preview Modal */}
       <Dialog open={!!selectedSpec} onOpenChange={(open) => !open && setSelectedSpec(null)}>
-        <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden bg-card border-border/80 shadow-2xl">
-          <DialogHeader className="p-4 border-b border-border bg-subtle/50 flex flex-row items-center justify-between">
+        <DialogContent className="sm:max-w-[90vw] sm:w-[1200px] h-[90vh] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden bg-card border-border/80 shadow-2xl">
+          <div className="p-4 border-b border-border bg-subtle/50 flex flex-row items-center justify-between shrink-0">
             <div className="flex flex-col">
               <DialogTitle className="text-lg font-semibold text-copy-primary">System Specification</DialogTitle>
               {selectedSpec && (
@@ -545,15 +612,15 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="gap-2 mr-6"
+                className="gap-2 mr-8"
                 onClick={() => handleDownload(selectedSpec)}
               >
                 <Download className="h-4 w-4" />
                 Download
               </Button>
             )}
-          </DialogHeader>
-          <ScrollArea className="flex-1 p-6">
+          </div>
+          <div className="flex-1 p-6 overflow-y-auto min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/5 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-white/10 transition-colors">
             {isLoadingContent ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-brand" />
@@ -563,7 +630,7 @@ export function AiSidebar({ isOpen, onClose }: AiSidebarProps) {
                 <ReactMarkdown>{specContent}</ReactMarkdown>
               </div>
             )}
-          </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </aside>

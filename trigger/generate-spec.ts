@@ -4,12 +4,18 @@ import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
+import { Liveblocks } from "@liveblocks/node";
+
+const liveblocks = new Liveblocks({
+  secret: process.env.LIVEBLOCKS_SECRET_KEY as string,
+});
+
 const generateSpecSchema = z.object({
   projectId: z.string(),
   roomId: z.string(),
   chatHistory: z.array(z.any()), // You could make this more strict if needed
-  nodes: z.array(z.any()),
-  edges: z.array(z.any()),
+  nodes: z.array(z.any()).optional(),
+  edges: z.array(z.any()).optional(),
 });
 
 export const generateSpecTask = task({
@@ -23,7 +29,7 @@ export const generateSpecTask = task({
       throw new Error(`Invalid payload: ${parsedPayload.error.message}`);
     }
 
-    const { projectId, roomId, chatHistory, nodes, edges } = parsedPayload.data;
+    const { projectId, roomId, chatHistory } = parsedPayload.data;
     
     console.log(`Generate Spec task triggered for room ${roomId}`);
 
@@ -32,7 +38,8 @@ export const generateSpecTask = task({
       .set("message", "Analyzing canvas and chat history...");
 
     try {
-      const currentState = JSON.stringify({ nodes, edges });
+      const document = await liveblocks.getStorageDocument(roomId, "json");
+      const currentState = JSON.stringify(document);
       const currentChat = JSON.stringify(chatHistory);
 
       metadata
@@ -41,7 +48,7 @@ export const generateSpecTask = task({
 
       // Call AI to generate Markdown
       const { text } = await generateText({
-        model: google("gemini-2.5-pro"), // Using pro for better text generation reasoning
+        model: google("gemini-2.5-flash"), // Using flash for free tier availability
         system: `You are an expert AI Architect. Your job is to create a detailed, highly readable technical specification in Markdown format.
 You are given the current state of a system diagram (nodes and edges in JSON) and the chat history of the room.
 The spec should include:
@@ -61,7 +68,7 @@ Use Markdown formatting properly with headings, lists, bold text, and code block
         .set("message", "Saving specification...");
 
       const blob = await put(`specs/${projectId}/spec-${Date.now()}.md`, text, {
-        access: "public",
+        access: "private",
         contentType: "text/markdown",
       });
 
