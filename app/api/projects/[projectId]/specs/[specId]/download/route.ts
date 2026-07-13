@@ -33,8 +33,11 @@ export async function GET(
     }
 
     // Fetch the file from Vercel Blob
-    const response = await fetch(spec.filePath);
-    
+    const response = await fetch(spec.filePath, {
+      headers: {
+        Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`
+      }
+    });
     if (!response.ok) {
       console.error(`Failed to fetch blob from ${spec.filePath}`);
       return new NextResponse("Failed to retrieve file", { status: 500 });
